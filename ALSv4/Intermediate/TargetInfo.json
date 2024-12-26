@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "ALSv4",
+			"Path": "D:\\Unreal Projects\\ALSv4\\Source\\ALSv4.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "ALSv4Editor",
+			"Path": "D:\\Unreal Projects\\ALSv4\\Source\\ALSv4Editor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}
