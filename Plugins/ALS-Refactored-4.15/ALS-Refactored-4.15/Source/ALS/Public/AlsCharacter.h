@@ -516,6 +516,7 @@ private:
 	void StartMantlingImplementation(const FAlsMantlingParameters& Parameters);
 
 protected:
+	
 	UFUNCTION(BlueprintNativeEvent, Category = "Als Character")
 	UAlsMantlingSettings* SelectMantlingSettings(EAlsMantlingType MantlingType);
 
