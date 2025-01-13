@@ -14,7 +14,7 @@ ARlsCharacter::ARlsCharacter()
 void ARlsCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	UpdateCharacterInfo();
 }
 
 // Called to bind functionality to input
@@ -22,5 +22,11 @@ void ARlsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+// 每帧更新角色数值
+void ARlsCharacter::UpdateCharacterInfo()
+{
+	
 }
 

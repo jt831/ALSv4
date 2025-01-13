@@ -23,7 +23,7 @@ void ARlsCharacterExample::CalcCamera(float DeltaTime, struct FMinimalViewInfo& 
 {
 	if (Camera->IsActive())
 	{
-		Camera->ApplyCameraInfo(OutResult);
+		Camera->UpdateCamera(OutResult);
 		return;
 	}
 	Super::CalcCamera(DeltaTime, OutResult);
@@ -81,7 +81,12 @@ void ARlsCharacterExample::Input_OnLookMouse(const FInputActionValue& ActionValu
 void ARlsCharacterExample::Input_OnMove(const FInputActionValue& ActionValue)
 {
 	const FVector2D Value{URlsVector::ClampMagnitude012D(ActionValue.Get<FVector2D>())};
-	
+
+	const FRotator& ViewRotation = Super::GetViewRotation().GetNormalized();
+	const FVector& ViewForwardDir = URlsVector::AngleToDirectionXY(ViewRotation.Yaw);
+	const FVector& ViewRightDir = URlsVector::PerpendicularCounterClockwiseXY(ViewForwardDir);
+
+	AddMovementInput(ViewForwardDir*Value.Y+ViewRightDir*Value.X);
 	
 }
 

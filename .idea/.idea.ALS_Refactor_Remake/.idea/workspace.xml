@@ -32,13 +32,21 @@
     <setting file="file://$PROJECT_DIR$/../../EpicGames/Games/UE_5.5/Engine/Source/Runtime/Media/Public/IMediaTextureSample.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ALS_Refactor_Remake/UHT/RlsCharacterExample.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/ALS-Refactored-4.15/ALS-Refactored-4.15/Source/ALS/Public/AlsCharacter.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/ALS_Refactor_Remake.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/ALS_Refactor_Remake.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Private/RlsAnimInstance.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Private/RlsCameraAnimationInstance.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Private/RlsCharacter.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Private/RlsCharacterExample.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Private/RlsLinkedAnimInstance.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Public/RlsAnimInstance.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Public/RlsCameraAnimationInstance.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Public/RlsCharacter.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Public/RlsCharacterExample.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ALS_Refactor_Remake/Public/RlsLinkedAnimInstance.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -51,6 +59,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;C/C++ Project.ALS_Refactor_Remake.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;&lt;unknown&gt;&quot;,
@@ -164,6 +173,13 @@
       <workItem from="1736302172253" duration="4016000" />
       <workItem from="1736306599462" duration="8468000" />
       <workItem from="1736383293731" duration="16891000" />
+      <workItem from="1736469561140" duration="12508000" />
+      <workItem from="1736497948070" duration="2930000" />
+      <workItem from="1736597205564" duration="138000" />
+      <workItem from="1736643008041" duration="11222000" />
+      <workItem from="1736665635149" duration="5718000" />
+      <workItem from="1736679203770" duration="1631000" />
+      <workItem from="1736745424738" duration="8249000" />
     </task>
     <servers />
   </component>
