@@ -87,11 +87,11 @@ void ARlsCharacterExample::Input_OnMove(const FInputActionValue& ActionValue)
 	const FVector& ViewRightDir = URlsVector::PerpendicularCounterClockwiseXY(ViewForwardDir);
 
 	AddMovementInput(ViewForwardDir*Value.Y+ViewRightDir*Value.X);
-	
 }
 
 void ARlsCharacterExample::Input_OnWalk(const FInputActionValue& Value)
 {
+	
 }
 
 void ARlsCharacterExample::Input_OnSprint(const FInputActionValue& Value)

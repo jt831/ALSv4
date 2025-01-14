@@ -45,6 +45,23 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="Rls|Constants|Sockets", meta = (ReturnDisplayName="Socket Name"))
 	static const FName& HeadBoneName();
+
+	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& PoseGroundedCurveName();
+	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& PoseInAirCurveName();
+	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& PoseStandingCurveName();
+	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& PoseCrouchingCurveName();
+	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& PoseMovingCurveName();
+	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& PoseGaitCurveName();
+	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& SprintBlockCurveName();
+	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& FeetCrossingCurveName();
 };
 
 inline const FName& URlsConstants::RotationLagCurveName()
@@ -116,5 +133,58 @@ inline const FName& URlsConstants::RootBoneName()
 inline const FName& URlsConstants::HeadBoneName()
 {
 	static const FName Name{TEXT("head")};
+	return Name;
+}
+
+inline const FName& URlsConstants::PoseGaitCurveName()
+{
+	/*
+	 * 同原版Weight_Gait。步行为1，奔跑为2，冲刺为3
+	 */
+	static const FName Name{TEXT("PoseGait")};
+	return Name;
+}
+inline const FName& URlsConstants::PoseGroundedCurveName()
+{
+	/*
+	 * 地面为1，其余为0
+	 */
+	static const FName Name{TEXT("PoseGrounded")};
+	return Name;
+}
+
+inline const FName& URlsConstants::PoseInAirCurveName()
+{
+	static const FName Name{TEXTVIEW("PoseInAir")};
+	return Name;
+}
+
+inline const FName& URlsConstants::PoseStandingCurveName()
+{
+	static const FName Name{TEXTVIEW("PoseStanding")};
+	return Name;
+}
+
+inline const FName& URlsConstants::PoseCrouchingCurveName()
+{
+	static const FName Name{TEXTVIEW("PoseCrouching")};
+	return Name;
+}
+
+inline const FName& URlsConstants::PoseMovingCurveName()
+{
+	static const FName Name{TEXTVIEW("PoseMoving")};
+	return Name;
+}
+
+inline const FName& URlsConstants::SprintBlockCurveName()
+{
+	static const FName Name{TEXTVIEW("SprintBlock")};
+	return Name;
+}
+
+inline const FName& URlsConstants::FeetCrossingCurveName()
+{
+	static const FName Name{TEXTVIEW("FeetCrossing")};
 	return Name;
 }

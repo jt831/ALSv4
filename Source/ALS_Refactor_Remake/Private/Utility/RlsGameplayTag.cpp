@@ -27,6 +27,7 @@ namespace RlsGaitTags
 
 namespace RlsLocomotionActionTags
 {
+	UE_DEFINE_GAMEPLAY_TAG(None, FName(TEXT("Rls.LocomotionAction.None")))
 	UE_DEFINE_GAMEPLAY_TAG(Rolling, FName(TEXT("Rls.LocomotionAction.Rolling")))
 	UE_DEFINE_GAMEPLAY_TAG(Mantling, FName(TEXT("Rls.LocomotionAction.Mantling")))
 }
