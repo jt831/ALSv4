@@ -77,12 +77,52 @@ struct ALS_REFACTOR_REMAKE_API FRlsMovementDirection
 		bRight = direction == ERlsMovementDirection::Right;
 	}
 };
+
+UENUM(BlueprintType)
+enum class ERlsHipDirection : uint8
+{
+	Forward,
+	ForwardLeft,
+	ForwardRight,
+	Backward,
+	BackwardLeft,
+	BackwardRight
+};
+
+USTRUCT()
+struct FTransitionInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TObjectPtr<UAnimSequenceBase> Sequence;
+
+	UPROPERTY()
+	float BlendInTime {0.2f};
+
+	UPROPERTY()
+	float BlendOutTime {0.2f};
+
+	UPROPERTY()
+	float StartTime {0.f};
+
+	UPROPERTY()
+	float PlayRate {1.0f};
+
+	UPROPERTY()
+	float StopBlendOutTime {0.2f};
+};
+
 USTRUCT(BlueprintType)
 struct ALS_REFACTOR_REMAKE_API FRlsGroundedState
 {
 	GENERATED_BODY()
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="RLS")
 	float FeetCrossCurveAmount{0.f};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="RLS")
+	float FootPlantedCurveAmount{0.f};
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	FRlsVelocityBlendState VelocityBlend;
@@ -90,7 +130,14 @@ struct ALS_REFACTOR_REMAKE_API FRlsGroundedState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	FRlsMovementDirection MovementDirection;
 
+	// 角色位于八向运动的哪个状态
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	ERlsHipDirection HipDirection;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	FRlsRotationYawOffsetsState RotationYawOffsets;
-	
+
+	// Cpp自用。为播放蒙太奇提供参数
+	UPROPERTY()
+	FTransitionInfo TransitionInfo;
 };

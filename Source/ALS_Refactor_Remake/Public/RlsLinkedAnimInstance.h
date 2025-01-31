@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ABP_State/RlsGroundedState.h"
 #include "Animation/AnimInstance.h"
 #include "RlsLinkedAnimInstance.generated.h"
 
@@ -16,9 +17,9 @@ class ALS_REFACTOR_REMAKE_API URlsLinkedAnimInstance : public UAnimInstance
 	
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "State", Transient)
-	TWeakObjectPtr<URlsAnimInstance> Parent;
+	TObjectPtr<URlsAnimInstance> Parent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
+	UPROPERTY(VisibleAnywhere, Category = "State", Transient)
 	TObjectPtr<ARlsCharacter> Character;
 	
 public:
@@ -32,6 +33,9 @@ protected:
 	UFUNCTION(BlueprintPure, Category = "RLS|Linked Animation Instance",
 		Meta = (BlueprintThreadSafe, ReturnDisplayName = "Parent"))
 	URlsAnimInstance* GetParent() const;
+
+	UFUNCTION(BlueprintCallable, Category = "RLS|Linked Animation Instance", Meta = (BlueprintThreadSafe))
+	void SetHipsDirection(ERlsHipDirection HipDirection);
 };
 
 inline URlsAnimInstance* URlsLinkedAnimInstance::GetParent() const

@@ -5,9 +5,6 @@
 USTRUCT(BlueprintType)
 struct ALS_REFACTOR_REMAKE_API FRlsLocomotionAnimBaseValues
 {
-	/*
-	 * 直接从BP接收过来的参数
-	 */
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
@@ -21,6 +18,15 @@ struct ALS_REFACTOR_REMAKE_API FRlsLocomotionAnimBaseValues
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	FVector Velocity{ForceInit};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	FVector WorldLocation{ForceInit};
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	float DeltaDistance{ForceInit};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	float DistanceSpeed{ForceInit};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS", Meta = (ClampMin = -180, ClampMax = 180, ForceUnits = "deg"))
 	float VelocityYawAngle{0.0f};
@@ -39,6 +45,9 @@ struct ALS_REFACTOR_REMAKE_API FRlsLocomotionAnimBaseValues
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	uint8 bMoving : 1 {false};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	uint8 bHasAcceleration : 1 {false};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	uint8 bMovingSmooth : 1 {false};

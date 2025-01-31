@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Kismet/KismetMathLibrary.h"
 #include "RlsAnimInstance.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "RlsCharacter.h"
 #include "Utility/RlsConstants.h"
 
@@ -10,7 +10,6 @@ void URlsAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	Character = Cast<ARlsCharacter>(GetOwningActor());
-	
 }
 
 void URlsAnimInstance::NativeBeginPlay()
@@ -26,8 +25,10 @@ void URlsAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (!IsValid(Character) || !IsValid(Settings)) return;
 	
 	UpdateInfoFromCharacter();
+	UpdateBaseValues(DeltaSeconds);
 	UpdateStandingMovement();
 	UpdateGroundedMovement(DeltaSeconds);
+	bIsFirstUpdate = false;
 }
 
 void URlsAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
@@ -36,6 +37,7 @@ void URlsAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	 * 将获取曲线值放在线程安全更新中
 	 */
 	Super::NativeThreadSafeUpdateAnimation(DeltaSeconds);
+	if (!IsValid(Character) || !IsValid(Settings)) return;
 	UpdatePoseState();
 }
 
@@ -52,13 +54,14 @@ void URlsAnimInstance::UpdateInfoFromCharacter()
 	LocomotionBaseValues.Velocity = LocomotionValues.Velocity;
 	LocomotionBaseValues.bMoving = LocomotionValues.bHasVelocity;
 	LocomotionBaseValues.Acceleration = LocomotionValues.Acceleration;
+	LocomotionBaseValues.bHasAcceleration = LocomotionValues.bHasAcceleration;
 }
 
 void URlsAnimInstance::UpdateGroundedMovement(float DeltaTime)
 {
 	// 更新VelocityBlend
 	FVector LocalVelocity = GetLocalVelocity();
-	if (LocalVelocity.Normalize())
+	if (LocalVelocity.Normalize() && LocalVelocity.Length() > UE_SMALL_NUMBER)
 	{
 		LocalVelocity /= FMath::Abs(LocalVelocity.X)+FMath::Abs(LocalVelocity.Y)+FMath::Abs(LocalVelocity.Z);
 	}
@@ -74,6 +77,11 @@ void URlsAnimInstance::UpdateGroundedMovement(float DeltaTime)
 	GroundedState.VelocityBlend.RightAmount = FMath::FInterpTo(GroundedState.VelocityBlend.RightAmount, RightTarget, DeltaTime, InterpSpeed);
 
 	// 更新MovementDirection
+	const FRotator Velocity_RotateFromXVector = UKismetMathLibrary::Conv_VectorToRotator(LocomotionBaseValues.Velocity);
+	const FRotator ControlRotator = Character->GetControlRotation();
+	UKismetMathLibrary::NormalizedDeltaRotator(Velocity_RotateFromXVector, ControlRotator);
+	const float DeltaAngle_VC = FMath::UnwindDegrees(Velocity_RotateFromXVector.Yaw - ControlRotator.Yaw);
+	
 	if (CharacterStates.RotationMode == RlsRotationModeTags::VelocityDirection ||
 		CharacterStates.Gait == RlsGaitTags::Sprinting)
 	{
@@ -82,20 +90,16 @@ void URlsAnimInstance::UpdateGroundedMovement(float DeltaTime)
 	else
 	{
 		const float AngleThreshold = Settings->Grounded.MovementDirectionThreshold;
-		const FRotator Velocity_RotateFromXVector = UKismetMathLibrary::Conv_VectorToRotator(LocomotionBaseValues.Velocity);
-		const FRotator ControlRotator = Character->GetControlRotation();
-		UKismetMathLibrary::NormalizedDeltaRotator(Velocity_RotateFromXVector, ControlRotator);
-		const float DeltaAngle = FMath::UnwindDegrees(Velocity_RotateFromXVector.Yaw - ControlRotator.Yaw);
-
-		if (DeltaAngle < AngleThreshold && DeltaAngle > -AngleThreshold)
+		
+		if (DeltaAngle_VC < AngleThreshold && DeltaAngle_VC > -AngleThreshold)
 		{
 			GroundedState.MovementDirection = ERlsMovementDirection::Forward;
 		}
-		else if (DeltaAngle > AngleThreshold && DeltaAngle < 180.f - AngleThreshold)
+		else if (DeltaAngle_VC > AngleThreshold && DeltaAngle_VC < 180.f - AngleThreshold)
 		{
 			GroundedState.MovementDirection = ERlsMovementDirection::Right;
 		}
-		else if (DeltaAngle < -AngleThreshold && DeltaAngle > -180.f + AngleThreshold)
+		else if (DeltaAngle_VC < -AngleThreshold && DeltaAngle_VC > -180.f + AngleThreshold)
 		{
 			GroundedState.MovementDirection = ERlsMovementDirection::Left;
 		}
@@ -103,9 +107,21 @@ void URlsAnimInstance::UpdateGroundedMovement(float DeltaTime)
 		{
 			GroundedState.MovementDirection = ERlsMovementDirection::Backward;
 		}
-		UE_LOG(LogTemp, Display, TEXT("DeltaAngle: %hhd"), GroundedState.MovementDirection.bRight);
 	}
-	
+
+	// 更新RotationYawOffset
+	if (IsValid(Settings->Grounded.RotationYawOffset_FB) &&
+		IsValid(Settings->Grounded.RotationYawOffset_L) &&
+		IsValid(Settings->Grounded.RotationYawOffset_R))
+	{
+		float RotationYawOffset_FB = Settings->Grounded.RotationYawOffset_FB->GetFloatValue(DeltaAngle_VC);
+		float RotationYawOffset_L = Settings->Grounded.RotationYawOffset_L->GetFloatValue(DeltaAngle_VC);
+		float RotationYawOffset_R = Settings->Grounded.RotationYawOffset_R->GetFloatValue(DeltaAngle_VC);
+		GroundedState.RotationYawOffsets.ForwardAngle = RotationYawOffset_FB;
+		GroundedState.RotationYawOffsets.BackwardAngle = RotationYawOffset_FB;
+		GroundedState.RotationYawOffsets.LeftAngle = RotationYawOffset_L;
+		GroundedState.RotationYawOffsets.RightAngle = RotationYawOffset_R;
+	}
 }
 
 void URlsAnimInstance::UpdateStandingMovement()
@@ -134,6 +150,7 @@ void URlsAnimInstance::UpdateStandingMovement()
 			LocomotionBaseValues.Speed / Settings->Grounded.Standing.AnimatedSprintSpeed,
 			PoseState.UnweightedGaitSprintingAmount
 			);
+
 	const float PlayRatePart3 = PlayRatePart2 / StandingState.StrideBlendAmount;
 	StandingState.PlayRate = FMath::Clamp(PlayRatePart3, UE_SMALL_NUMBER, 3.0f);
 
@@ -167,9 +184,50 @@ void URlsAnimInstance::UpdatePoseState()
 
 	// 更新FeetCross曲线值
 	GroundedState.FeetCrossCurveAmount = GetCurveValue(URlsConstants::FeetCrossingCurveName());
+	GroundedState.FootPlantedCurveAmount = GetCurveValue(URlsConstants::FootPlantedCurveName());
+}
+
+void URlsAnimInstance::UpdateBaseValues(float DeltaTime)
+{
+	LocomotionBaseValues.DeltaDistance = (Character->GetActorLocation() - LocomotionBaseValues.WorldLocation).Length();
+	LocomotionBaseValues.WorldLocation = Character->GetActorLocation();
+	LocomotionBaseValues.DistanceSpeed = LocomotionBaseValues.DeltaDistance / DeltaTime;
+	if (bIsFirstUpdate)
+	{
+		LocomotionBaseValues.DeltaDistance = 0.f;
+		LocomotionBaseValues.DistanceSpeed = 0.f;
+	}
 }
 
 FVector URlsAnimInstance::GetLocalVelocity() const
 {
 	return Character->GetActorRotation().UnrotateVector(LocomotionBaseValues.Velocity);
+}
+
+UCharacterMovementComponent* URlsAnimInstance::GetCharacterMovementComponent() const
+{
+	return Cast<UCharacterMovementComponent>(Character->GetMovementComponent());
+}
+
+void URlsAnimInstance::SetHipsDirection(ERlsHipDirection HipDirection)
+{
+	GroundedState.HipDirection = HipDirection;
+}
+
+void URlsAnimInstance::PlayTransition(UAnimSequenceBase* Sequence, float BlendInTime, float BlendOutTime,
+	float StartTime, float PlayRate)
+{
+	if (!IsValid(Sequence))
+	{
+		return;
+	}
+	
+	GroundedState.TransitionInfo.BlendInTime = BlendInTime;
+	GroundedState.TransitionInfo.BlendOutTime = BlendOutTime;
+	GroundedState.TransitionInfo.StartTime = StartTime;
+	GroundedState.TransitionInfo.PlayRate = PlayRate;
+	GroundedState.TransitionInfo.Sequence = Sequence;
+
+	PlaySlotAnimationAsDynamicMontage(Sequence, URlsConstants::FootStopSlotName(), BlendInTime, BlendOutTime, PlayRate,
+		1, 0, StartTime);
 }

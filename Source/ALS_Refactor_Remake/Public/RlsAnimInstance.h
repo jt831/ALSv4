@@ -8,8 +8,11 @@
 #include "ABP_State/RlsPoseState.h"
 #include "ABP_State/RlsGroundedState.h"
 #include "ABP_State/RlsStandingState.h"
+#include "ABP_State/RlsAnimConstant.h"
 #include "ABP_State/RlsLocomotionAnimBaseValues.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "State/RlsCharacterStates.h"
+#include "State/RlsControlRigInput.h"
 #include "RlsAnimInstance.generated.h"
 
 class ARlsCharacter;
@@ -26,8 +29,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
 	TObjectPtr<ARlsCharacter> Character;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State")
+	FRlsControlRigInput ControlRigInput;
+
 	//  ------------------------- 用于表示角色当前状态 --------------------------
-	// 直接从BP接收过来的参数与状态
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
+	uint8 bIsFirstUpdate: 1 {true};
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
 	FRlsCharacterStates CharacterStates;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
@@ -41,6 +48,8 @@ public:
 	FRlsGroundedState GroundedState;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
 	FRlsStandingState StandingState;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
+	FRlsAnimConstant ConstantValue;
 	
 public:
 	virtual void NativeInitializeAnimation() override;
@@ -48,10 +57,21 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds) override;
 	
+	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", Meta = (BlueprintThreadSafe))
+	void PlayTransition(UAnimSequenceBase* Sequence, float BlendInTime=0.2, float BlendOutTime=0.2, float StartTime=0., float PlayRate=1.);
+
+	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", Meta = (BlueprintThreadSafe))
+	void SetHipsDirection(ERlsHipDirection HipDirection);
+	
+protected:
+	UFUNCTION(BlueprintCallable, Category="RLS|Animation Instance", Meta=(BlueprintThreadSafe, ReturnDisplayName="CharacterMovementComponent"))
+	UCharacterMovementComponent* GetCharacterMovementComponent() const;
+
 private:
 	void UpdateInfoFromCharacter();
 	void UpdateGroundedMovement(float DeltaTime);
 	void UpdateStandingMovement();
 	void UpdatePoseState();
+	void UpdateBaseValues(float DeltaTime);
 	FVector GetLocalVelocity() const;
 };

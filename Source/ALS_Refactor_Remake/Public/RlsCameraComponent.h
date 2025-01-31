@@ -72,7 +72,7 @@ private:
 	void UpdateCameraRotation(FRotator& CameraRotation, float DeltaTime, bool bAllowLag);
 
 	void UpdateCameraLocation(FVector& CameraTargetLocation, FVector& CameraLocation, float DeltaTime, bool bAllowLag);
-	void AppendThirdPersonCameraPivotLocation(FVector& CameraTargetLocation, float DeltaTime);
+	void AppendThirdPersonCameraPivotLocation(FVector& CameraTargetLocation, float DeltaTime, bool bAllowLag);
 	FVector GetPivotOffset();
 	FVector GetCameraOffset();
 	void AppendSphereTrace(FVector& CameraTargetLocation);

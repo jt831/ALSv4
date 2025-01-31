@@ -53,12 +53,14 @@ void ARlsCharacterExample::SetupPlayerInputComponent(UInputComponent* Input)
 			, &ThisClass::Input_OnSprint);
 		EnhancedInput->BindAction(SprintAction, ETriggerEvent::Canceled, this
 			, &ThisClass::Input_OnSprint);
-		EnhancedInput->BindAction(WalkAction, ETriggerEvent::Triggered, this
+		EnhancedInput->BindAction(WalkAction, ETriggerEvent::Started, this
 			, &ThisClass::Input_OnWalk);
 		EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this
 			, &ThisClass::Input_OnJump);
 		EnhancedInput->BindAction(RollAction, ETriggerEvent::Triggered, this
 			, &ThisClass::Input_OnRoll);
+		EnhancedInput->BindAction(ChangeRotationModeAction, ETriggerEvent::Started, this,
+			&ThisClass::Input_OnChangeRotationMode);
 	}
 }
 
@@ -91,11 +93,19 @@ void ARlsCharacterExample::Input_OnMove(const FInputActionValue& ActionValue)
 
 void ARlsCharacterExample::Input_OnWalk(const FInputActionValue& Value)
 {
-	
+	if (GetDesiredGait() == RlsGaitTags::Walking)
+	{
+		SetDesiredGait(RlsGaitTags::Running);
+	}
+	else
+	{
+		SetDesiredGait(RlsGaitTags::Walking);
+	}
 }
 
 void ARlsCharacterExample::Input_OnSprint(const FInputActionValue& Value)
 {
+	SetDesiredGait(Value.Get<bool>() ? RlsGaitTags::Sprinting : RlsGaitTags::Running);
 }
 
 void ARlsCharacterExample::Input_OnJump(const FInputActionValue& Value)
@@ -108,4 +118,12 @@ void ARlsCharacterExample::Input_OnRoll(const FInputActionValue& Value)
 
 void ARlsCharacterExample::Input_OnFly(const FInputActionValue& Value)
 {
+}
+
+void ARlsCharacterExample::Input_OnChangeRotationMode(const FInputActionValue& Value)
+{
+	
+	SetDesiredRotationMode(GetDesiredRotationMode()== RlsRotationModeTags::VelocityDirection ?
+							RlsRotationModeTags::ViewDirection :
+							RlsRotationModeTags::VelocityDirection);
 }

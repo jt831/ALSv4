@@ -14,11 +14,17 @@ struct ALS_REFACTOR_REMAKE_API FRlsLocomotionValues
 	bool bHasVelocity{false};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	bool bHasAcceleration{false};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	FVector Velocity{ForceInit};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
-	FVector PreviousVelocity{ForceInit};
+	FVector Acceleration{ForceInit};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
-	FVector Acceleration{ForceInit};
+	FRotator ControlRotation{ForceInit};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	FRotator ControlRotationRate{ForceInit};
 };

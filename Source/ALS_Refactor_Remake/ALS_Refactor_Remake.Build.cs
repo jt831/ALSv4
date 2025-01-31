@@ -11,7 +11,7 @@ public class ALS_Refactor_Remake : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new[]
 		{
-			"Core", "CoreUObject", "Engine", "GameplayTags"
+			"Core", "CoreUObject", "Engine", "GameplayTags", "ControlRig",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new[]

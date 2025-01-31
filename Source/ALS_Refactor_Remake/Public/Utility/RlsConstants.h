@@ -9,59 +9,68 @@ class ALS_REFACTOR_REMAKE_API URlsConstants : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 public:
 	// 相机
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& RotationLagCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PivotLagSpeedXCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PivotLagSpeedYCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PivotLagSpeedZCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PivotOffsetXCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PivotOffsetYCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PivotOffsetZCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& CameraOffsetXCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& CameraOffsetYCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& CameraOffsetZCurveName();
 
-	// 角色
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Sockets", meta = (ReturnDisplayName="Socket Name"))
-	static const FName& RootBoneName();
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& DistanceCurveName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Sockets", meta = (ReturnDisplayName="Socket Name"))
+	// 角色
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Sockets", meta = (ReturnDisplayName="Socket Name"))
+	static const FName& RootBoneName();
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Sockets", meta = (ReturnDisplayName="Socket Name"))
 	static const FName& HeadBoneName();
 
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Slots")
+	static const FName& FootStopSlotName();
+
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PoseGroundedCurveName();
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PoseInAirCurveName();
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PoseStandingCurveName();
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PoseCrouchingCurveName();
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PoseMovingCurveName();
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& PoseGaitCurveName();
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& SprintBlockCurveName();
-	UFUNCTION(BlueprintPure, Category="Rls|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
 	static const FName& FeetCrossingCurveName();
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Animation Curves", meta = (ReturnDisplayName="Animation Curves"))
+	static const FName& FootPlantedCurveName();
+	UFUNCTION(BlueprintPure, Category = "RLS|Constants|Animation Curves", Meta = (ReturnDisplayName = "Animation Curves"))
+	static const FName& RotationYawOffsetCurveName();
 };
 
 inline const FName& URlsConstants::RotationLagCurveName()
@@ -124,6 +133,12 @@ inline const FName& URlsConstants::CameraOffsetZCurveName()
 	return Name;
 }
 
+inline const FName& URlsConstants::DistanceCurveName()
+{
+	static const FName Name{TEXT("Distance")};
+	return Name;
+}
+
 inline const FName& URlsConstants::RootBoneName()
 {
 	static const FName Name{TEXT("root")};
@@ -135,6 +150,13 @@ inline const FName& URlsConstants::HeadBoneName()
 	static const FName Name{TEXT("head")};
 	return Name;
 }
+
+inline const FName& URlsConstants::FootStopSlotName()
+{
+	static const FName Name{TEXT("FootStop")};
+	return Name;
+}
+
 
 inline const FName& URlsConstants::PoseGaitCurveName()
 {
@@ -186,5 +208,17 @@ inline const FName& URlsConstants::SprintBlockCurveName()
 inline const FName& URlsConstants::FeetCrossingCurveName()
 {
 	static const FName Name{TEXTVIEW("FeetCrossing")};
+	return Name;
+}
+
+inline const FName& URlsConstants::FootPlantedCurveName()
+{
+	static const FName Name{TEXTVIEW("FootPlanted")};
+	return Name;
+}
+
+inline const FName& URlsConstants::RotationYawOffsetCurveName()
+{
+	static const FName Name{TEXTVIEW("RotationYawOffset")};
 	return Name;
 }

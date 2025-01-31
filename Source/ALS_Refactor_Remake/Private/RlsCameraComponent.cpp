@@ -39,7 +39,7 @@ void URlsCameraComponent::RegisterComponentTickFunctions(bool bRegister)
 
 void URlsCameraComponent::Activate(bool bReset)
 {
-	// 先唤醒一次Tick函数？
+	// 先初始化一次参数。比如让CameraRotation=Character->GetViewRotation(), CameraLocation = PivotLocation
 	if (bReset || ShouldActivate())
 	{
 		TickCamera(0.0f, false);
@@ -130,7 +130,7 @@ void URlsCameraComponent::UpdateCameraRotation(FRotator& OutCameraRotation, floa
 void URlsCameraComponent::UpdateCameraLocation(FVector& OutCameraTargetLocation, FVector& OutCameraLocation, float DeltaTime, bool bAllowLag)
 {
 	// 获得相机基础位置
-	AppendThirdPersonCameraPivotLocation(OutCameraTargetLocation, DeltaTime);
+	AppendThirdPersonCameraPivotLocation(OutCameraTargetLocation, DeltaTime, bAllowLag);
 	// 添加偏移
 	FVector PivotLocation = OutCameraTargetLocation + GetPivotOffset();
 	// 绕点旋转
@@ -141,7 +141,7 @@ void URlsCameraComponent::UpdateCameraLocation(FVector& OutCameraTargetLocation,
 	OutCameraLocation = CameraFinalLocation;
 }
 
-void URlsCameraComponent::AppendThirdPersonCameraPivotLocation(FVector& OutCameraLocation, float DeltaTime)
+void URlsCameraComponent::AppendThirdPersonCameraPivotLocation(FVector& OutCameraLocation, float DeltaTime, bool bAllowLag)
 {
 	if (!IsValid(Mesh)) return;
 
@@ -151,7 +151,7 @@ void URlsCameraComponent::AppendThirdPersonCameraPivotLocation(FVector& OutCamer
 	FVector SecondPivotLocation = Mesh->GetSocketLocation(Settings->ThirdPerson.SecondPivotSocketName);
 	FVector PivotLocation = (FirstPivotLocation + SecondPivotLocation) * 0.5f;
 
-	if (!IsValid(AnimationInstance))
+	if (!IsValid(AnimationInstance) || !bAllowLag)
 	{
 		OutCameraLocation = PivotLocation;
 		return;

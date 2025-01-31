@@ -46,6 +46,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Settings|Rls InputAction",
 		meta=(DisplayThumbnail=false))
 	TObjectPtr<UInputAction> RollAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Settings|Rls InputAction",
+		meta=(DisplayThumbnail=false))
+	TObjectPtr<UInputAction> ChangeRotationModeAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Settings|Rls Rate",
 		meta=(ClampMin=0, ForceUnits = "x"))
@@ -88,4 +92,6 @@ private:
 	virtual void Input_OnRoll(const FInputActionValue& Value);
 
 	virtual void Input_OnFly(const FInputActionValue& Value);
+
+	virtual void Input_OnChangeRotationMode(const FInputActionValue& Value);
 };
