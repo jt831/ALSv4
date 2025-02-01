@@ -60,6 +60,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", Meta = (BlueprintThreadSafe))
 	void PlayTransition(UAnimSequenceBase* Sequence, float BlendInTime=0.2, float BlendOutTime=0.2, float StartTime=0., float PlayRate=1.);
 
+	UFUNCTION(BlueprintCallable, Category="RLS|Animation Instance", Meta = (BlueprintThreadSafe))
+	void StopTransition(float BlendOutDuration = 0.2);
+	
 	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", Meta = (BlueprintThreadSafe))
 	void SetHipsDirection(ERlsHipDirection HipDirection);
 	
@@ -73,5 +76,9 @@ private:
 	void UpdateStandingMovement();
 	void UpdatePoseState();
 	void UpdateBaseValues(float DeltaTime);
+	void PlayQueuedTransition();
+	void StopQueuedTransition();
+	void UpdateControlRigInput();
+	void UpdateFootLockInfo(float& Alpha, FVector& Location, FRotator& Rotation, const FName& FootLockCurve, const FName& FootIkBone);
 	FVector GetLocalVelocity() const;
 };

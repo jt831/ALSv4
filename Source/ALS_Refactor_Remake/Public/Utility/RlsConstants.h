@@ -47,6 +47,10 @@ public:
 	static const FName& RootBoneName();
 	UFUNCTION(BlueprintPure, Category="RLS|Constants|Sockets", meta = (ReturnDisplayName="Socket Name"))
 	static const FName& HeadBoneName();
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Sockets", meta = (ReturnDisplayName="Socket Name"))
+	static const FName& LeftFootIkName();
+	UFUNCTION(BlueprintPure, Category="RLS|Constants|Sockets", meta = (ReturnDisplayName="Socket Name"))
+	static const FName& RightFootIkName();
 
 	UFUNCTION(BlueprintPure, Category="RLS|Constants|Slots")
 	static const FName& FootStopSlotName();
@@ -71,6 +75,14 @@ public:
 	static const FName& FootPlantedCurveName();
 	UFUNCTION(BlueprintPure, Category = "RLS|Constants|Animation Curves", Meta = (ReturnDisplayName = "Animation Curves"))
 	static const FName& RotationYawOffsetCurveName();
+	UFUNCTION(BlueprintPure, Category = "RLS|Constants|Animation Curves", Meta = (ReturnDisplayName = "Animation Curves"))
+	static const FName& FootLeftIkCurveName();
+	UFUNCTION(BlueprintPure, Category = "RLS|Constants|Animation Curves", Meta = (ReturnDisplayName = "Animation Curves"))
+	static const FName& FootRightIkCurveName();
+	UFUNCTION(BlueprintPure, Category = "RLS|Constants|Animation Curves", Meta = (ReturnDisplayName = "Animation Curves"))
+	static const FName& FootLeftLockCurveName();
+	UFUNCTION(BlueprintPure, Category = "RLS|Constants|Animation Curves", Meta = (ReturnDisplayName = "Animation Curves"))
+	static const FName& FootRightLockCurveName();
 };
 
 inline const FName& URlsConstants::RotationLagCurveName()
@@ -151,6 +163,18 @@ inline const FName& URlsConstants::HeadBoneName()
 	return Name;
 }
 
+inline const FName& URlsConstants::LeftFootIkName()
+{
+	static const FName Name{TEXT("ik_foot_l")};
+	return Name;
+}
+
+inline const FName& URlsConstants::RightFootIkName()
+{
+	static const FName Name{TEXT("ik_foot_r")};
+	return Name;
+}
+
 inline const FName& URlsConstants::FootStopSlotName()
 {
 	static const FName Name{TEXT("FootStop")};
@@ -220,5 +244,29 @@ inline const FName& URlsConstants::FootPlantedCurveName()
 inline const FName& URlsConstants::RotationYawOffsetCurveName()
 {
 	static const FName Name{TEXTVIEW("RotationYawOffset")};
+	return Name;
+}
+
+inline const FName& URlsConstants::FootLeftIkCurveName()
+{
+	static const FName Name{TEXTVIEW("FootLeftIk")};
+	return Name;
+}
+
+inline const FName& URlsConstants::FootRightIkCurveName()
+{
+	static const FName Name{TEXTVIEW("FootRightIk")};
+	return Name;
+}
+
+inline const FName& URlsConstants::FootLeftLockCurveName()
+{
+	static const FName Name{TEXTVIEW("FootLeftIk")};
+	return Name;
+}
+
+inline const FName& URlsConstants::FootRightLockCurveName()
+{
+	static const FName Name{TEXTVIEW("FootRightIk")};
 	return Name;
 }

@@ -28,6 +28,7 @@ void URlsAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	UpdateBaseValues(DeltaSeconds);
 	UpdateStandingMovement();
 	UpdateGroundedMovement(DeltaSeconds);
+	UpdateControlRigInput();
 	bIsFirstUpdate = false;
 }
 
@@ -38,6 +39,7 @@ void URlsAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	 */
 	Super::NativeThreadSafeUpdateAnimation(DeltaSeconds);
 	if (!IsValid(Character) || !IsValid(Settings)) return;
+	
 	UpdatePoseState();
 }
 
@@ -199,6 +201,7 @@ void URlsAnimInstance::UpdateBaseValues(float DeltaTime)
 	}
 }
 
+
 FVector URlsAnimInstance::GetLocalVelocity() const
 {
 	return Character->GetActorRotation().UnrotateVector(LocomotionBaseValues.Velocity);
@@ -228,6 +231,90 @@ void URlsAnimInstance::PlayTransition(UAnimSequenceBase* Sequence, float BlendIn
 	GroundedState.TransitionInfo.PlayRate = PlayRate;
 	GroundedState.TransitionInfo.Sequence = Sequence;
 
-	PlaySlotAnimationAsDynamicMontage(Sequence, URlsConstants::FootStopSlotName(), BlendInTime, BlendOutTime, PlayRate,
-		1, 0, StartTime);
+	if (IsInGameThread())
+	{
+		PlayQueuedTransition();
+	}
+}
+
+void URlsAnimInstance::StopTransition(float BlendOutDuration)
+{
+	GroundedState.TransitionInfo.bStopTransitionQueued = true;
+	GroundedState.TransitionInfo.StopBlendOutTime = BlendOutDuration;
+
+	if (IsInGameThread())
+	{
+		StopQueuedTransition();
+	}
+}
+
+void URlsAnimInstance::PlayQueuedTransition()
+{
+	check(IsInGameThread())
+
+	PlaySlotAnimationAsDynamicMontage(GroundedState.TransitionInfo.Sequence, URlsConstants::FootStopSlotName(),
+		GroundedState.TransitionInfo.BlendInTime, GroundedState.TransitionInfo.BlendOutTime,
+		GroundedState.TransitionInfo.PlayRate,
+		1, 0, GroundedState.TransitionInfo.StartTime);
+	
+	GroundedState.TransitionInfo.Sequence = nullptr;
+	GroundedState.TransitionInfo.BlendInTime = 0.;
+	GroundedState.TransitionInfo.BlendOutTime = 0.;
+	GroundedState.TransitionInfo.StartTime = 0.;
+	GroundedState.TransitionInfo.PlayRate = 1.;
+}
+
+void URlsAnimInstance::StopQueuedTransition()
+{
+	check(IsInGameThread())
+
+	if (!GroundedState.TransitionInfo.bStopTransitionQueued) return;
+
+	StopSlotAnimation(GroundedState.TransitionInfo.StopBlendOutTime, URlsConstants::FootStopSlotName());
+
+	GroundedState.TransitionInfo.bStopTransitionQueued = false;
+	GroundedState.TransitionInfo.StopBlendOutTime = 0.;
+
+}
+
+void URlsAnimInstance::UpdateControlRigInput()
+{
+	ControlRigInput.LeftFootIKWeight = GetCurveValue(URlsConstants::FootLeftIkCurveName());
+	ControlRigInput.RightFootIKWeight = GetCurveValue(URlsConstants::FootRightIkCurveName());
+
+	if (ControlRigInput.LeftFootIKWeight > 0.)
+	{
+		UpdateFootLockInfo(ControlRigInput.FootLockInfo.LeftFootLockWeight, ControlRigInput.FootLockInfo.LeftFootLocation,
+			ControlRigInput.FootLockInfo.LeftFootRotation, URlsConstants::FootLeftLockCurveName(), URlsConstants::LeftFootIkName());
+	}
+
+	if (ControlRigInput.RightFootIKWeight > 0.)
+	{
+		UpdateFootLockInfo(ControlRigInput.FootLockInfo.RightFootLockWeight, ControlRigInput.FootLockInfo.RightFootLocation,
+			ControlRigInput.FootLockInfo.RightFootRotation, URlsConstants::FootRightLockCurveName(), URlsConstants::RightFootIkName());
+	}
+}
+
+void URlsAnimInstance::UpdateFootLockInfo(float& Alpha, FVector& Location, FRotator& Rotation, const FName& FootLockCurve, const FName& FootIkBone)
+{
+	float FootLockCurveValue = GetCurveValue(FootLockCurve);
+	if (FootLockCurveValue > 0.99 || FootLockCurveValue < Alpha)
+	{
+		Alpha = FootLockCurveValue;
+	}
+
+	auto SkeletonMeshComp = GetOwningComponent();
+	if (Alpha > 0.99)
+	{
+		FTransform IkBoneTrans = SkeletonMeshComp->GetSocketTransform(FootIkBone, RTS_Component);
+
+		Location = IkBoneTrans.GetLocation();
+		Rotation = IkBoneTrans.GetRotation().Rotator();
+	}
+
+	if (Alpha > 0.)
+	{
+		FVector DeltaDistance = SkeletonMeshComp->GetComponentRotation().UnrotateVector(LocomotionBaseValues.Velocity * GetDeltaSeconds());
+		Location -= DeltaDistance;
+	}
 }

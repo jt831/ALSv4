@@ -111,6 +111,9 @@ struct FTransitionInfo
 
 	UPROPERTY()
 	float StopBlendOutTime {0.2f};
+
+	UPROPERTY()
+	bool bStopTransitionQueued {false};
 };
 
 USTRUCT(BlueprintType)
