@@ -1614,7 +1614,7 @@ void UAlsAnimationInstance::StopQueuedTransitionAndTurnInPlaceAnimations()
 	{
 		return;
 	}
-
+	
 	StopSlotAnimation(TransitionsState.QueuedStopTransitionsBlendOutDuration, UAlsConstants::TransitionSlotName());
 	StopSlotAnimation(TransitionsState.QueuedStopTransitionsBlendOutDuration, UAlsConstants::TurnInPlaceStandingSlotName());
 	StopSlotAnimation(TransitionsState.QueuedStopTransitionsBlendOutDuration, UAlsConstants::TurnInPlaceCrouchingSlotName());

@@ -56,6 +56,7 @@ public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds) override;
+	virtual void NativePostEvaluateAnimation() override;
 	
 	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", Meta = (BlueprintThreadSafe))
 	void PlayTransition(UAnimSequenceBase* Sequence, float BlendInTime=0.2, float BlendOutTime=0.2, float StartTime=0., float PlayRate=1.);

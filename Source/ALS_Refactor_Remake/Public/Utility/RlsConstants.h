@@ -261,12 +261,12 @@ inline const FName& URlsConstants::FootRightIkCurveName()
 
 inline const FName& URlsConstants::FootLeftLockCurveName()
 {
-	static const FName Name{TEXTVIEW("FootLeftIk")};
+	static const FName Name{TEXTVIEW("FootLeftLock")};
 	return Name;
 }
 
 inline const FName& URlsConstants::FootRightLockCurveName()
 {
-	static const FName Name{TEXTVIEW("FootRightIk")};
+	static const FName Name{TEXTVIEW("FootRightLock")};
 	return Name;
 }

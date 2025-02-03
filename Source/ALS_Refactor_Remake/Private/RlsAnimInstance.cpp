@@ -43,6 +43,17 @@ void URlsAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	UpdatePoseState();
 }
 
+void URlsAnimInstance::NativePostEvaluateAnimation()
+{
+	Super::NativePostEvaluateAnimation();
+
+	if (!IsValid(Character) || !IsValid(Settings)) return;
+
+	PlayQueuedTransition();
+	StopQueuedTransition();
+	
+}
+
 
 void URlsAnimInstance::UpdateInfoFromCharacter()
 {
@@ -220,11 +231,6 @@ void URlsAnimInstance::SetHipsDirection(ERlsHipDirection HipDirection)
 void URlsAnimInstance::PlayTransition(UAnimSequenceBase* Sequence, float BlendInTime, float BlendOutTime,
 	float StartTime, float PlayRate)
 {
-	if (!IsValid(Sequence))
-	{
-		return;
-	}
-	
 	GroundedState.TransitionInfo.BlendInTime = BlendInTime;
 	GroundedState.TransitionInfo.BlendOutTime = BlendOutTime;
 	GroundedState.TransitionInfo.StartTime = StartTime;
@@ -252,6 +258,8 @@ void URlsAnimInstance::PlayQueuedTransition()
 {
 	check(IsInGameThread())
 
+	if (!IsValid(GroundedState.TransitionInfo.Sequence) || GroundedState.TransitionInfo.bStopTransitionQueued) return;
+	
 	PlaySlotAnimationAsDynamicMontage(GroundedState.TransitionInfo.Sequence, URlsConstants::FootStopSlotName(),
 		GroundedState.TransitionInfo.BlendInTime, GroundedState.TransitionInfo.BlendOutTime,
 		GroundedState.TransitionInfo.PlayRate,
@@ -269,7 +277,7 @@ void URlsAnimInstance::StopQueuedTransition()
 	check(IsInGameThread())
 
 	if (!GroundedState.TransitionInfo.bStopTransitionQueued) return;
-
+	
 	StopSlotAnimation(GroundedState.TransitionInfo.StopBlendOutTime, URlsConstants::FootStopSlotName());
 
 	GroundedState.TransitionInfo.bStopTransitionQueued = false;
@@ -298,6 +306,7 @@ void URlsAnimInstance::UpdateControlRigInput()
 void URlsAnimInstance::UpdateFootLockInfo(float& Alpha, FVector& Location, FRotator& Rotation, const FName& FootLockCurve, const FName& FootIkBone)
 {
 	float FootLockCurveValue = GetCurveValue(FootLockCurve);
+	
 	if (FootLockCurveValue > 0.99 || FootLockCurveValue < Alpha)
 	{
 		Alpha = FootLockCurveValue;
