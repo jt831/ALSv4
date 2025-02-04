@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Settings/RlsGroundedSettings.h"
+#include "Settings/RlsInAirSettings.h"
 #include "Engine/DataAsset.h"
 #include "RlsAnimInstanceSettings.generated.h"
 
@@ -15,4 +16,7 @@ class ALS_REFACTOR_REMAKE_API URlsAnimInstanceSettings : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FRlsGroundedSettings Grounded;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	FRlsInAirSettings InAir;
 };

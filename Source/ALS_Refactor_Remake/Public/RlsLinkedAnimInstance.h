@@ -31,11 +31,14 @@ public:
 
 protected:
 	UFUNCTION(BlueprintPure, Category = "RLS|Linked Animation Instance",
-		Meta = (BlueprintThreadSafe, ReturnDisplayName = "Parent"))
+		meta = (BlueprintThreadSafe, ReturnDisplayName = "Parent"))
 	URlsAnimInstance* GetParent() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RLS|Linked Animation Instance", Meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintCallable, Category = "RLS|Linked Animation Instance", meta = (BlueprintThreadSafe))
 	void SetHipsDirection(ERlsHipDirection HipDirection);
+
+	UFUNCTION(BlueprintCallable, Category = "RLS|Linked Animation Instance", meta = (BlueprintThreadSafe))
+	void UpdateInAir();
 };
 
 inline URlsAnimInstance* URlsLinkedAnimInstance::GetParent() const

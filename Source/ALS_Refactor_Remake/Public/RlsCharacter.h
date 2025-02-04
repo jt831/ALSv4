@@ -54,6 +54,7 @@ protected:
 public:
 	ARlsCharacter();
 	virtual void Tick(float DeltaTime) override;
+	virtual void PostInitializeComponents() override;
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode = 0) override;
 	
 	// 角色状态
@@ -65,6 +66,10 @@ public:
 	// 给ABP传递角色信息
 	FRlsCharacterStates GetCharacterStates() const {return CharacterStates;}
 	FRlsLocomotionValues GetLocomotionValues() const {return LocomotionValues;}
+
+protected:
+	virtual void OnJumped_Implementation() override;
+	virtual void Jump() override;
 	
 private:
 	void UpdateLocomotionValues(float DeltaTime);

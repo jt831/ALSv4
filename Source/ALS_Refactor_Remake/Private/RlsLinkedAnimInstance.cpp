@@ -29,3 +29,13 @@ void URlsLinkedAnimInstance::SetHipsDirection(ERlsHipDirection HipDirection)
 		Parent->SetHipsDirection(HipDirection);
 	}
 }
+
+void URlsLinkedAnimInstance::UpdateInAir()
+{
+	if (IsValid(Parent))
+	{
+		Parent->UpdateInAir();
+	}
+}
+
+

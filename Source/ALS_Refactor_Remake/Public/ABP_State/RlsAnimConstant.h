@@ -10,5 +10,8 @@ struct ALS_REFACTOR_REMAKE_API FRlsAnimConstant
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "RLS")
 	FName DistanceCurveName{URlsConstants::DistanceCurveName()};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "RLS")
+	FName FootPlantedCurveName{URlsConstants::FootPlantedCurveName()};
 	
 };

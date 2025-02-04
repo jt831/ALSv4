@@ -3,6 +3,7 @@
 #include "RlsAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "RlsCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "Utility/RlsConstants.h"
 
 void URlsAnimInstance::NativeInitializeAnimation()
@@ -29,6 +30,7 @@ void URlsAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	UpdateStandingMovement();
 	UpdateGroundedMovement(DeltaSeconds);
 	UpdateControlRigInput();
+	UpdateInAirOnGameThread();
 	bIsFirstUpdate = false;
 }
 
@@ -51,7 +53,6 @@ void URlsAnimInstance::NativePostEvaluateAnimation()
 
 	PlayQueuedTransition();
 	StopQueuedTransition();
-	
 }
 
 
@@ -68,6 +69,12 @@ void URlsAnimInstance::UpdateInfoFromCharacter()
 	LocomotionBaseValues.bMoving = LocomotionValues.bHasVelocity;
 	LocomotionBaseValues.Acceleration = LocomotionValues.Acceleration;
 	LocomotionBaseValues.bHasAcceleration = LocomotionValues.bHasAcceleration;
+	LocomotionBaseValues.bHasInput = LocomotionValues.bHasInput;
+	LocomotionBaseValues.Location = Character->GetActorLocation();
+
+	auto* Capsule = Character->GetCapsuleComponent();
+	LocomotionBaseValues.CapsuleRadius = Capsule->GetScaledCapsuleRadius();
+	LocomotionBaseValues.CapsuleHalfHeight = Capsule->GetScaledCapsuleHalfHeight();
 }
 
 void URlsAnimInstance::UpdateGroundedMovement(float DeltaTime)
@@ -135,6 +142,15 @@ void URlsAnimInstance::UpdateGroundedMovement(float DeltaTime)
 		GroundedState.RotationYawOffsets.LeftAngle = RotationYawOffset_L;
 		GroundedState.RotationYawOffsets.RightAngle = RotationYawOffset_R;
 	}
+}
+
+void URlsAnimInstance::UpdateInAirOnGameThread()
+{
+	check(IsInGameThread())
+
+	//UE_LOG(LogTemp, Warning, TEXT("%hhu"), InAirState.bDesiredJumped);
+	InAirState.bJumped = InAirState.bJumped || InAirState.bDesiredJumped;
+	InAirState.bDesiredJumped = false;
 }
 
 void URlsAnimInstance::UpdateStandingMovement()
@@ -236,22 +252,12 @@ void URlsAnimInstance::PlayTransition(UAnimSequenceBase* Sequence, float BlendIn
 	GroundedState.TransitionInfo.StartTime = StartTime;
 	GroundedState.TransitionInfo.PlayRate = PlayRate;
 	GroundedState.TransitionInfo.Sequence = Sequence;
-
-	if (IsInGameThread())
-	{
-		PlayQueuedTransition();
-	}
 }
 
 void URlsAnimInstance::StopTransition(float BlendOutDuration)
 {
 	GroundedState.TransitionInfo.bStopTransitionQueued = true;
 	GroundedState.TransitionInfo.StopBlendOutTime = BlendOutDuration;
-
-	if (IsInGameThread())
-	{
-		StopQueuedTransition();
-	}
 }
 
 void URlsAnimInstance::PlayQueuedTransition()
@@ -285,13 +291,57 @@ void URlsAnimInstance::StopQueuedTransition()
 
 }
 
+void URlsAnimInstance::UpdateInAir()
+{
+	if (!IsValid(Settings)) return;
+	
+	// 在动画蓝图中调用
+	if (InAirState.bJumped)
+	{
+		InAirState.bJumped = false;
+		InAirState.JumpPlayRate = FMath::Lerp(Settings->InAir.MinPlayRate, Settings->InAir.MaxPlayRate,
+			FMath::Clamp(LocomotionBaseValues.Speed / Settings->InAir.PlayRateSpeed, 0., 1.));
+	}
+
+	UpdateGroundPrediction();
+}
+
+void URlsAnimInstance::UpdateGroundPrediction()
+{
+	const float VerticalSpeedThreshold = Settings->InAir.MinVerticalSpeed;
+	const float MinVerticalSpeed = Settings->InAir.MinVerticalSpeed;
+	const float MaxVerticalSpeed = Settings->InAir.MaxVerticalSpeed;
+	const float MaxSweepDistance = Settings->InAir.MaxSweepDistance;
+	const float MinSweepDistance = Settings->InAir.MinSweepDistance;
+	float VerticalSpeed = abs(LocomotionBaseValues.Velocity.Z);
+	
+	// 如果速度过小，则不检测
+	if (VerticalSpeed < VerticalSpeedThreshold) return;
+
+	// 将下落速度映射到检测距离上去
+	float SweepDistance = FMath::GetMappedRangeValueClamped(FFloatRange(MinVerticalSpeed, MaxVerticalSpeed),
+		FFloatRange(MinSweepDistance, MaxSweepDistance), VerticalSpeed);
+	float SweepVector = SweepDistance * LocomotionBaseValues.Velocity.Normalize();
+
+	FVector SweepLocation = LocomotionBaseValues.Location;
+	// 检测
+	FHitResult Hit;
+	GetWorld()->SweepSingleByChannel(Hit, SweepLocation, SweepLocation+SweepVector,
+		FQuat::Identity, ECC_Visibility, FCollisionShape::MakeCapsule(LocomotionBaseValues.CapsuleRadius, LocomotionBaseValues.CapsuleHalfHeight));
+
+	bool bGroundValid = Hit.IsValidBlockingHit();
+
+	InAirState.GroundPredictionAmount = bGroundValid ? Settings->InAir.GroundPredictionAmountCurve->GetFloatValue(Hit.Time) : 0;
+}
+
 void URlsAnimInstance::UpdateControlRigInput()
 {
 	ControlRigInput.LeftFootIKWeight = GetCurveValue(URlsConstants::FootLeftIkCurveName());
 	ControlRigInput.RightFootIKWeight = GetCurveValue(URlsConstants::FootRightIkCurveName());
-
+	
 	if (ControlRigInput.LeftFootIKWeight > 0.)
 	{
+
 		UpdateFootLockInfo(ControlRigInput.FootLockInfo.LeftFootLockWeight, ControlRigInput.FootLockInfo.LeftFootLocation,
 			ControlRigInput.FootLockInfo.LeftFootRotation, URlsConstants::FootLeftLockCurveName(), URlsConstants::LeftFootIkName());
 	}

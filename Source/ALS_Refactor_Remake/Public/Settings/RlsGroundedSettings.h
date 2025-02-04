@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "Curves/CurveVector.h"
 #include "Settings/RlsStandingSettings.h"
 #include "Settings/RlsCrouchingSettings.h"
 #include "RlsGroundedSettings.generated.h"

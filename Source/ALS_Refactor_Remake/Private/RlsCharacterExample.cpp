@@ -110,6 +110,10 @@ void ARlsCharacterExample::Input_OnSprint(const FInputActionValue& Value)
 
 void ARlsCharacterExample::Input_OnJump(const FInputActionValue& Value)
 {
+	if (Value.Get<bool>())
+	{
+		Jump();
+	}
 }
 
 void ARlsCharacterExample::Input_OnRoll(const FInputActionValue& Value)

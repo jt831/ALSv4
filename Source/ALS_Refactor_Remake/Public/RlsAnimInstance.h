@@ -7,6 +7,7 @@
 #include "RlsAnimInstanceSettings.h"
 #include "ABP_State/RlsPoseState.h"
 #include "ABP_State/RlsGroundedState.h"
+#include "ABP_State/RlsInAirState.h"
 #include "ABP_State/RlsStandingState.h"
 #include "ABP_State/RlsAnimConstant.h"
 #include "ABP_State/RlsLocomotionAnimBaseValues.h"
@@ -47,6 +48,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
 	FRlsGroundedState GroundedState;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
+	FRLSInAirState InAirState;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
 	FRlsStandingState StandingState;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
 	FRlsAnimConstant ConstantValue;
@@ -58,22 +61,32 @@ public:
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds) override;
 	virtual void NativePostEvaluateAnimation() override;
 	
-	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", Meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", meta = (BlueprintThreadSafe))
 	void PlayTransition(UAnimSequenceBase* Sequence, float BlendInTime=0.2, float BlendOutTime=0.2, float StartTime=0., float PlayRate=1.);
 
-	UFUNCTION(BlueprintCallable, Category="RLS|Animation Instance", Meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintCallable, Category="RLS|Animation Instance", meta = (BlueprintThreadSafe))
 	void StopTransition(float BlendOutDuration = 0.2);
 	
-	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", Meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", meta = (BlueprintThreadSafe))
 	void SetHipsDirection(ERlsHipDirection HipDirection);
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "RLS|Animation Instance", meta = (BlueprintThreadSafe))
+	void UpdateInAir();
+
+	void UpdateGroundPrediction();
 	
 protected:
 	UFUNCTION(BlueprintCallable, Category="RLS|Animation Instance", Meta=(BlueprintThreadSafe, ReturnDisplayName="CharacterMovementComponent"))
 	UCharacterMovementComponent* GetCharacterMovementComponent() const;
 
+public:
+	void Jump();
+	
 private:
 	void UpdateInfoFromCharacter();
 	void UpdateGroundedMovement(float DeltaTime);
+	void UpdateInAirOnGameThread();
 	void UpdateStandingMovement();
 	void UpdatePoseState();
 	void UpdateBaseValues(float DeltaTime);
@@ -83,3 +96,10 @@ private:
 	void UpdateFootLockInfo(float& Alpha, FVector& Location, FRotator& Rotation, const FName& FootLockCurve, const FName& FootIkBone);
 	FVector GetLocalVelocity() const;
 };
+
+inline void URlsAnimInstance::Jump()
+{
+	// 跳跃时，在角色蓝图中调用
+	InAirState.bDesiredJumped = true;
+}
+

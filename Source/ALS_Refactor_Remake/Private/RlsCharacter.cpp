@@ -14,9 +14,8 @@ ARlsCharacter::ARlsCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	MovementComponent = Cast<URlsCharacterMovementComponent>(GetCharacterMovement());
-	AnimInstance = Cast<URlsAnimInstance>(GetMesh()->GetAnimInstance());
+
 }
 
 // Called every frame
@@ -28,7 +27,13 @@ void ARlsCharacter::Tick(float DeltaTime)
 	UpdateLocomotionValues(DeltaTime);
 	UpdateCharacterRotation(DeltaTime);
 	bInit = false;
-	//UE_LOG(LogTemp, Warning, TEXT("Speed %f"), LocomotionValues.Speed2D);
+}
+
+void ARlsCharacter::PostInitializeComponents()
+{
+	AnimInstance = Cast<URlsAnimInstance>(GetMesh()->GetAnimInstance());
+	
+	Super::PostInitializeComponents();
 }
 
 void ARlsCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
@@ -62,11 +67,33 @@ const FGameplayTag& ARlsCharacter::GetDesiredGait() const
 	return DesiredCharacterStates.DesiredGait;
 }
 
+void ARlsCharacter::OnJumped_Implementation()
+{
+	Super::OnJumped_Implementation();
+
+	if (IsValid(AnimInstance))
+	{
+		AnimInstance->Jump();
+	}
+}
+
+void ARlsCharacter::Jump()
+{
+	if (CharacterStates.LocomotionMode == RlsLocomotionModeTags::Grounded &&
+		CharacterStates.Stance == RlsStanceTags::Standing &&
+		CharacterStates.LocomotionAction == RlsLocomotionActionTags::None)
+	{
+		Super::Jump();
+	}
+}
+
 void ARlsCharacter::UpdateLocomotionValues(float DeltaTime)
 {
 	LocomotionValues.Velocity = GetVelocity();
 
 	LocomotionValues.bHasVelocity = LocomotionValues.Velocity.Length() > 0.;
+
+	LocomotionValues.bHasInput = MovementComponent->GetCurrentAcceleration().Length() > UE_SMALL_NUMBER;
 
 	LocomotionValues.Speed2D = FVector(LocomotionValues.Velocity.X, LocomotionValues.Velocity.Y, 0).Length();
 

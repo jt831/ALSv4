@@ -12,6 +12,12 @@ struct ALS_REFACTOR_REMAKE_API FRlsLocomotionValues
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	bool bHasVelocity{false};
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	bool bHasInput{false};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
+	bool bJump{false};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS")
 	bool bHasAcceleration{false};
