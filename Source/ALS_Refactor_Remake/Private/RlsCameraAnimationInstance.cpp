@@ -20,6 +20,6 @@ void URlsCameraAnimationInstance::NativeUpdateAnimation(float DeltaTime)
 	
 	if (!IsValid(Character) || !IsValid(Camera)) return;
 
-	Gait = Character->GetCharacterStates().Gait;
-	Stance = Character->GetCharacterStates().Stance;
+	Gait = Character->GetGait();
+	Stance = Character->GetStance();
 }

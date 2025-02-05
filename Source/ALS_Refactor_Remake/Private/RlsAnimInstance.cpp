@@ -61,7 +61,9 @@ void URlsAnimInstance::UpdateInfoFromCharacter()
 	/*
 	 * 单纯用于接收来自角色的信息
 	 */
-	CharacterStates = Character->GetCharacterStates();
+	RotationMode = Character->GetRotationMode();
+	Gait = Character->GetGait();
+	LocomotionMode = Character->GetLocomotionMode();
 	
 	const FRlsLocomotionValues LocomotionValues = Character->GetLocomotionValues();
 	LocomotionBaseValues.Speed = LocomotionValues.Speed2D;
@@ -102,8 +104,8 @@ void URlsAnimInstance::UpdateGroundedMovement(float DeltaTime)
 	UKismetMathLibrary::NormalizedDeltaRotator(Velocity_RotateFromXVector, ControlRotator);
 	const float DeltaAngle_VC = FMath::UnwindDegrees(Velocity_RotateFromXVector.Yaw - ControlRotator.Yaw);
 	
-	if (CharacterStates.RotationMode == RlsRotationModeTags::VelocityDirection ||
-		CharacterStates.Gait == RlsGaitTags::Sprinting)
+	if (RotationMode == RlsRotationModeTags::VelocityDirection ||
+		Gait == RlsGaitTags::Sprinting)
 	{
 		GroundedState.MovementDirection = ERlsMovementDirection::Forward;
 	}
@@ -164,7 +166,7 @@ void URlsAnimInstance::UpdateStandingMovement()
 	
 	// 更新WalkRunBlendAmount
 	StandingState.WalkRunBlendAmount =
-		CharacterStates.Gait == RlsGaitTags::Walking ? 0.f : 1.f;
+		Gait == RlsGaitTags::Walking ? 0.f : 1.f;
 
 	// 更新PlayRate
 	const float PlayRatePart1 =

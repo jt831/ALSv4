@@ -42,15 +42,38 @@ protected:
 	FRotator PreviousControlRotation{ForceInit};
 	
 	// 角色状态
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
-	FRlsDesiredCharacterStates DesiredCharacterStates;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
-	FRlsCharacterStates CharacterStates;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
+	FGameplayTag LocomotionMode{RlsLocomotionModeTags::Grounded};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
+	FGameplayTag PreviousLocomotionMode{RlsLocomotionModeTags::Grounded};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.RotationMode"))
+	FGameplayTag DesiredRotationMode{RlsRotationModeTags::VelocityDirection};
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.RotationMode"))
+	FGameplayTag RotationMode{RlsRotationModeTags::ViewDirection};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Stance"))
+	FGameplayTag Stance{RlsStanceTags::Standing};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
+	FGameplayTag DesiredGait{RlsGaitTags::Running};
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
+	FGameplayTag Gait{RlsGaitTags::Running};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionAction"))
+	FGameplayTag LocomotionAction{RlsLocomotionActionTags::None};
 	
 	// 速度加速度这些运动信息
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
 	FRlsLocomotionValues LocomotionValues;
+private:
+	TObjectPtr<UCapsuleComponent> CapsuleComponent;
 
+	FRotator TargetRotator{ForceInit};
+	
 public:
 	ARlsCharacter();
 	virtual void Tick(float DeltaTime) override;
@@ -64,7 +87,10 @@ public:
 	const FGameplayTag& GetDesiredRotationMode() const;
 	
 	// 给ABP传递角色信息
-	FRlsCharacterStates GetCharacterStates() const {return CharacterStates;}
+	FGameplayTag GetRotationMode() const {return RotationMode;}
+	FGameplayTag GetGait() const {return Gait;}
+	FGameplayTag GetStance() const {return Stance;}
+	FGameplayTag GetLocomotionMode() const {return LocomotionMode;}
 	FRlsLocomotionValues GetLocomotionValues() const {return LocomotionValues;}
 
 protected:

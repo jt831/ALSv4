@@ -4,6 +4,7 @@ namespace RlsLocomotionModeTags
 {
 	UE_DEFINE_GAMEPLAY_TAG(Grounded, FName{TEXT("Rls.LocomotionMode.Grounded")})
 	UE_DEFINE_GAMEPLAY_TAG(InAir, FName{TEXT("Rls.LocomotionMode.InAir")})
+	UE_DEFINE_GAMEPLAY_TAG(Climb, FName{TEXT("Rls.LocomotionMode.Climb")})
 }
 
 namespace RlsRotationModeTags

@@ -5,8 +5,10 @@
 #include "RlsAnimInstance.h"
 #include "RlsCharacterMovementComponent.h"
 #include "RlsCharacterSettings.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Utility/RlsConstants.h"
 
 // Sets default values
@@ -15,7 +17,7 @@ ARlsCharacter::ARlsCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	MovementComponent = Cast<URlsCharacterMovementComponent>(GetCharacterMovement());
-
+	CapsuleComponent = GetCapsuleComponent();
 }
 
 // Called every frame
@@ -33,12 +35,14 @@ void ARlsCharacter::PostInitializeComponents()
 {
 	AnimInstance = Cast<URlsAnimInstance>(GetMesh()->GetAnimInstance());
 	
+	
 	Super::PostInitializeComponents();
 }
 
 void ARlsCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+	PreviousLocomotionMode = LocomotionMode;
 	switch (GetCharacterMovement()->MovementMode)
 	{
 		case MOVE_Walking:
@@ -58,13 +62,13 @@ void ARlsCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 
 
 void ARlsCharacter::SetDesiredGait(const FGameplayTag& NewState)
 {
-	if (DesiredCharacterStates.DesiredGait == NewState) return;
-	DesiredCharacterStates.DesiredGait = NewState;
+	if (DesiredGait == NewState) return;
+	DesiredGait = NewState;
 }
 
 const FGameplayTag& ARlsCharacter::GetDesiredGait() const
 {
-	return DesiredCharacterStates.DesiredGait;
+	return DesiredGait;
 }
 
 void ARlsCharacter::OnJumped_Implementation()
@@ -79,9 +83,9 @@ void ARlsCharacter::OnJumped_Implementation()
 
 void ARlsCharacter::Jump()
 {
-	if (CharacterStates.LocomotionMode == RlsLocomotionModeTags::Grounded &&
-		CharacterStates.Stance == RlsStanceTags::Standing &&
-		CharacterStates.LocomotionAction == RlsLocomotionActionTags::None)
+	if (LocomotionMode == RlsLocomotionModeTags::Grounded &&
+		Stance == RlsStanceTags::Standing &&
+		LocomotionAction == RlsLocomotionActionTags::None)
 	{
 		Super::Jump();
 	}
@@ -112,20 +116,24 @@ void ARlsCharacter::UpdateLocomotionValues(float DeltaTime)
 
 void ARlsCharacter::UpdateCharacterRotation(float DeltaTime)
 {
-	if (CharacterStates.LocomotionMode == RlsLocomotionModeTags::Grounded)
+	if (LocomotionMode == RlsLocomotionModeTags::Grounded)
 	{
 		UpdateGroundedRotation(DeltaTime);
 	}
+	/*else if (LocomotionMode == RlsLocomotionModeTags::Climb)
+	{
+		
+	}*/
 }
 
 void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 {
-	if (CharacterStates.LocomotionAction == RlsLocomotionActionTags::None &&
+	if (LocomotionAction == RlsLocomotionActionTags::None &&
 		(LocomotionValues.bHasVelocity || HasAnyRootMotion()))
 	{
-		const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);
+		//const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);
+		const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(MovementComponent->GetCurrentAcceleration());
 		const FRotator ViewRotator = GetViewRotation();
-		FRotator TargetRotator{ForceInit};
 
 		if (bInitRotation)
 		{
@@ -138,10 +146,25 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 		float ConstInterpSpeed = Settings->Grounded.InterpSpeed.CharacterRotationConstInterpSpeed;
 		float InterpSpeed = CalculateRotationInterpSpeed();
 		
-		if (CharacterStates.RotationMode == RlsRotationModeTags::VelocityDirection)
+		if (RotationMode == RlsRotationModeTags::VelocityDirection)
 		{
 			InterpSpeed = Settings->Grounded.InterpSpeed.VelocityDirectionCharacterRotationInterpSpeed;
+
+			// 修正角色被挡住时旋转的问题
+			/*FHitResult Hit;
+			FVector StartLocation = GetActorLocation();
+			FVector EndLocation = StartLocation + (CapsuleComponent->GetScaledCapsuleRadius() + 1) * GetActorForwardVector();
+			GetWorld()->SweepSingleByChannel(Hit, StartLocation, EndLocation,
+				FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(0.1f));*/
 			TargetRotator = VelocityRotator;
+			/*if (!Hit.bBlockingHit)
+			{
+				TargetRotator = VelocityRotator;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("AAA"))
+			}*/
 		}
 		else
 		{
@@ -149,7 +172,7 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 			
 			// 冲刺模式下不需要考虑其他因素
 			// 否则需要在斜四方向运动时添加旋转偏移量
-			if (CharacterStates.Gait != RlsGaitTags::Sprinting)
+			if (Gait != RlsGaitTags::Sprinting)
 			{
 				if (IsValid(AnimInstance))
 				{
@@ -165,13 +188,13 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 
 void ARlsCharacter::SetDesiredRotationMode(const FGameplayTag& NewDesiredRotationMode)
 {
-	if (DesiredCharacterStates.DesiredRotationMode == NewDesiredRotationMode) return;
-	DesiredCharacterStates.DesiredRotationMode = NewDesiredRotationMode;
+	if (DesiredRotationMode == NewDesiredRotationMode) return;
+	DesiredRotationMode = NewDesiredRotationMode;
 }
 
 const FGameplayTag& ARlsCharacter::GetDesiredRotationMode() const
 {
-	return DesiredCharacterStates.DesiredRotationMode;
+	return DesiredRotationMode;
 }
 
 void ARlsCharacter::UpdateCharacterStates()
@@ -182,41 +205,41 @@ void ARlsCharacter::UpdateCharacterStates()
 
 void ARlsCharacter::SetLocomotionMode(const FGameplayTag& NewState)
 {
-	if (CharacterStates.LocomotionMode == NewState) return;
-	CharacterStates.LocomotionMode = NewState;
+	if (LocomotionMode == NewState) return;
+	LocomotionMode = NewState;
 }
 
 void ARlsCharacter::UpdateRotationMode()
 {
 	// 当角色冲刺时，强制切换为速度方向
-	if (CharacterStates.Gait == RlsGaitTags::Sprinting)
+	if (Gait == RlsGaitTags::Sprinting)
 	{
 		SetRotationMode(RlsRotationModeTags::VelocityDirection);
 	}
 	// 否则自由切换旋转模式
 	else
 	{
-		SetRotationMode(DesiredCharacterStates.DesiredRotationMode);
+		SetRotationMode(DesiredRotationMode);
 	}
 }
 
 void ARlsCharacter::SetRotationMode(const FGameplayTag& NewState)
 {
-	if (CharacterStates.RotationMode == NewState) return;
-	CharacterStates.RotationMode = NewState;
+	if (RotationMode == NewState) return;
+	RotationMode = NewState;
 }
 
 void ARlsCharacter::UpdateGait()
 {
 	// 考虑其他状态
-	if (CharacterStates.LocomotionAction != RlsLocomotionActionTags::None ||
-		CharacterStates.LocomotionMode != RlsLocomotionModeTags::Grounded) return;
+	if (LocomotionAction != RlsLocomotionActionTags::None ||
+		LocomotionMode != RlsLocomotionModeTags::Grounded) return;
 
 	// 考虑用户输入与控制器夹角
 	FGameplayTag Gait_Part1 = RlsGaitTags::Running;
-	if (DesiredCharacterStates.DesiredGait != RlsGaitTags::Sprinting)
+	if (DesiredGait != RlsGaitTags::Sprinting)
 	{
-		Gait_Part1 = DesiredCharacterStates.DesiredGait;
+		Gait_Part1 = DesiredGait;
 	}
 	else if (CanSprint()) Gait_Part1 = RlsGaitTags::Sprinting;
 
@@ -243,7 +266,7 @@ void ARlsCharacter::UpdateGait()
 bool ARlsCharacter::CanSprint()
 {
 	if (!LocomotionValues.bHasVelocity) return false;
-	if (CharacterStates.RotationMode == RlsRotationModeTags::VelocityDirection) return true;
+	if (RotationMode == RlsRotationModeTags::VelocityDirection) return true;
 
 	const FRotator Acceleration_RotateFromXVector = UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Acceleration);
 	const FRotator ControlRotator = GetControlRotation();
@@ -255,8 +278,8 @@ bool ARlsCharacter::CanSprint()
 
 void ARlsCharacter::SetGait(const FGameplayTag& NewState)
 {
-	if (CharacterStates.Gait == NewState) return;
-	CharacterStates.Gait = NewState;
+	if (Gait == NewState) return;
+	Gait = NewState;
 }
 
 // -------------------------------------------------------------------------------------
