@@ -5,10 +5,8 @@
 #include "RlsAnimInstance.h"
 #include "RlsCharacterMovementComponent.h"
 #include "RlsCharacterSettings.h"
-#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Utility/RlsConstants.h"
 
 // Sets default values
@@ -17,7 +15,7 @@ ARlsCharacter::ARlsCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	MovementComponent = Cast<URlsCharacterMovementComponent>(GetCharacterMovement());
-	CapsuleComponent = GetCapsuleComponent();
+
 }
 
 // Called every frame
@@ -34,7 +32,6 @@ void ARlsCharacter::Tick(float DeltaTime)
 void ARlsCharacter::PostInitializeComponents()
 {
 	AnimInstance = Cast<URlsAnimInstance>(GetMesh()->GetAnimInstance());
-	
 	
 	Super::PostInitializeComponents();
 }
@@ -120,10 +117,6 @@ void ARlsCharacter::UpdateCharacterRotation(float DeltaTime)
 	{
 		UpdateGroundedRotation(DeltaTime);
 	}
-	/*else if (LocomotionMode == RlsLocomotionModeTags::Climb)
-	{
-		
-	}*/
 }
 
 void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
@@ -131,10 +124,10 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 	if (LocomotionAction == RlsLocomotionActionTags::None &&
 		(LocomotionValues.bHasVelocity || HasAnyRootMotion()))
 	{
-		//const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);
-		const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(MovementComponent->GetCurrentAcceleration());
+		const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);
+		//const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(MovementComponent->GetCurrentAcceleration());
 		const FRotator ViewRotator = GetViewRotation();
-
+		
 		if (bInitRotation)
 		{
 			SetActorRotation(ViewRotator);
@@ -149,26 +142,11 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 		if (RotationMode == RlsRotationModeTags::VelocityDirection)
 		{
 			InterpSpeed = Settings->Grounded.InterpSpeed.VelocityDirectionCharacterRotationInterpSpeed;
-
-			// 修正角色被挡住时旋转的问题
-			/*FHitResult Hit;
-			FVector StartLocation = GetActorLocation();
-			FVector EndLocation = StartLocation + (CapsuleComponent->GetScaledCapsuleRadius() + 1) * GetActorForwardVector();
-			GetWorld()->SweepSingleByChannel(Hit, StartLocation, EndLocation,
-				FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(0.1f));*/
-			TargetRotator = VelocityRotator;
-			/*if (!Hit.bBlockingHit)
-			{
-				TargetRotator = VelocityRotator;
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("AAA"))
-			}*/
+			ConstTargetRotation = VelocityRotator;
 		}
 		else
 		{
-			TargetRotator = ViewRotator;
+			ConstTargetRotation = ViewRotator;
 			
 			// 冲刺模式下不需要考虑其他因素
 			// 否则需要在斜四方向运动时添加旋转偏移量
@@ -176,13 +154,13 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 			{
 				if (IsValid(AnimInstance))
 				{
-					TargetRotator.Yaw += AnimInstance->GetCurveValue(URlsConstants::RotationYawOffsetCurveName());
+					ConstTargetRotation.Yaw += AnimInstance->GetCurveValue(URlsConstants::RotationYawOffsetCurveName());
 				}
 			}
 		}
 
-		TargetRotator.Roll = TargetRotator.Pitch = 0.f;
-		SetCharacterRotation(TargetRotator, DeltaTime, ConstInterpSpeed, InterpSpeed);
+		ConstTargetRotation.Roll = ConstTargetRotation.Pitch = 0.f;
+		SetCharacterRotation(ConstTargetRotation, DeltaTime, ConstInterpSpeed, InterpSpeed);
 	}
 }
 

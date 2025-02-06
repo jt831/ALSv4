@@ -36,16 +36,16 @@ public:
 	//  ------------------------- 用于表示角色当前状态 --------------------------
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
 	uint8 bIsFirstUpdate: 1 {true};
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
 	FGameplayTag LocomotionMode{RlsLocomotionModeTags::Grounded};
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
 	FGameplayTag RotationMode{RlsRotationModeTags::ViewDirection};
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
-	FGameplayTag Stance{RlsStanceTags::Standing};
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
 	FGameplayTag Gait{RlsGaitTags::Running};
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
-	FGameplayTag LocomotionAction{RlsLocomotionActionTags::None};
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Transient)
 	FRlsLocomotionAnimBaseValues LocomotionBaseValues;
 

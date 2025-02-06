@@ -31,6 +31,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
 	bool bInitRotation{true};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
+	FRotator ConstTargetRotation{ForceInit};
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
 	FRotator TargetRotation{ForceInit};
@@ -42,38 +45,37 @@ protected:
 	FRotator PreviousControlRotation{ForceInit};
 	
 	// 角色状态
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
-	FGameplayTag LocomotionMode{RlsLocomotionModeTags::Grounded};
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
-	FGameplayTag PreviousLocomotionMode{RlsLocomotionModeTags::Grounded};
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Stance"))
+	FGameplayTag DesiredStance{RlsStanceTags::Standing};
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
+	FGameplayTag DesiredGait{RlsGaitTags::Running};
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.RotationMode"))
 	FGameplayTag DesiredRotationMode{RlsRotationModeTags::VelocityDirection};
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.RotationMode"))
-	FGameplayTag RotationMode{RlsRotationModeTags::ViewDirection};
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Stance"))
-	FGameplayTag Stance{RlsStanceTags::Standing};
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
-	FGameplayTag DesiredGait{RlsGaitTags::Running};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
+	FGameplayTag PreviousLocomotionMode{RlsLocomotionModeTags::Grounded};
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
+	FGameplayTag LocomotionMode{RlsLocomotionModeTags::Grounded};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.RotationMode"))
+	FGameplayTag RotationMode{RlsRotationModeTags::VelocityDirection};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Stance"))
+	FGameplayTag Stance{RlsStanceTags::Standing};
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
 	FGameplayTag Gait{RlsGaitTags::Running};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionAction"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionAction"))
 	FGameplayTag LocomotionAction{RlsLocomotionActionTags::None};
 	
 	// 速度加速度这些运动信息
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
 	FRlsLocomotionValues LocomotionValues;
-private:
-	TObjectPtr<UCapsuleComponent> CapsuleComponent;
 
-	FRotator TargetRotator{ForceInit};
-	
 public:
 	ARlsCharacter();
 	virtual void Tick(float DeltaTime) override;
@@ -87,10 +89,10 @@ public:
 	const FGameplayTag& GetDesiredRotationMode() const;
 	
 	// 给ABP传递角色信息
-	FGameplayTag GetRotationMode() const {return RotationMode;}
-	FGameplayTag GetGait() const {return Gait;}
-	FGameplayTag GetStance() const {return Stance;}
-	FGameplayTag GetLocomotionMode() const {return LocomotionMode;}
+	FGameplayTag GetRotationMode() const { return RotationMode; }
+	FGameplayTag GetLocomotionMode() const { return LocomotionMode; }
+	FGameplayTag GetGait() const { return Gait; }
+	FGameplayTag GetStance() const {return Stance; }
 	FRlsLocomotionValues GetLocomotionValues() const {return LocomotionValues;}
 
 protected:

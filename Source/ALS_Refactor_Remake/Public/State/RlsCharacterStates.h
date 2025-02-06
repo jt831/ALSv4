@@ -36,18 +36,18 @@ struct ALS_REFACTOR_REMAKE_API FRlsCharacterStates
 	 */
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
 	FGameplayTag LocomotionMode{RlsLocomotionModeTags::Grounded};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.RotationMode"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.RotationMode"))
 	FGameplayTag RotationMode{RlsRotationModeTags::ViewDirection};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Stance"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Stance"))
 	FGameplayTag Stance{RlsStanceTags::Standing};
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
 	FGameplayTag Gait{RlsGaitTags::Running};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionAction"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionAction"))
 	FGameplayTag LocomotionAction{RlsLocomotionActionTags::None};
 };

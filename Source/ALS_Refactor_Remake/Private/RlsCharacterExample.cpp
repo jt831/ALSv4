@@ -5,9 +5,7 @@
 #include "RlsCameraComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Utility/RlsVector.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
-#include "Kismet/BlueprintTypeConversions.h"
 
 
 ARlsCharacterExample::ARlsCharacterExample()
@@ -89,16 +87,17 @@ void ARlsCharacterExample::Input_OnMove(const FInputActionValue& ActionValue)
 	const FRotator& ViewRotation = Super::GetViewRotation().GetNormalized();
 	const FVector& ViewForwardDir = URlsVector::AngleToDirectionXY(ViewRotation.Yaw);
 	const FVector& ViewRightDir = URlsVector::PerpendicularCounterClockwiseXY(ViewForwardDir);
-	
-	const FVector& ActorUpDir = GetActorUpVector();
-	const FVector& ActorRightDir = GetActorRightVector();
+
+	const FVector& ActorUpVector = GetActorUpVector();
+	const FVector& ActorRightVector = GetActorRightVector();
+
 	if (LocomotionMode == RlsLocomotionModeTags::Grounded)
 	{
 		AddMovementInput(ViewForwardDir*Value.Y+ViewRightDir*Value.X);
 	}
 	else if (LocomotionMode == RlsLocomotionModeTags::Climb)
 	{
-		AddMovementInput(ActorUpDir*Value.Y + ActorRightDir*Value.X);
+		AddMovementInput(ActorUpVector*Value.Y+ActorRightVector*Value.X);
 	}
 }
 
