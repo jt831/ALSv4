@@ -22,16 +22,22 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
 	FGameplayTag Gait_Part1;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
+	FGameplayTag LocomotionMode;
 
 public:
 	void SetGait_Part1(const FGameplayTag& NewState);
+	void SetLocomotionMode(const FGameplayTag& NewState);
 
 protected:
 	virtual void MoveSmooth(const FVector& InVelocity, const float DeltaSeconds, FStepDownResult* OutStepDownResult = 0) override;
 	virtual void PhysWalking(float deltaTime, int32 Iterations) override;
 	virtual void PhysNavWalking(float deltaTime, int32 Iterations) override;
+	virtual void PhysFlying(float deltaTime, int32 Iterations) override;
 	
 private:
 	URlsCharacterMovementComponent();
 	void UpdateGroundedMovement();
+	void UpdateClimbMovement();
 };

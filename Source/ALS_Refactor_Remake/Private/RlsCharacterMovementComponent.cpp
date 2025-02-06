@@ -13,15 +13,28 @@ void URlsCharacterMovementComponent::SetGait_Part1(const FGameplayTag& NewState)
 	}
 }
 
+void URlsCharacterMovementComponent::SetLocomotionMode(const FGameplayTag& NewState)
+{
+	if (NewState != LocomotionMode)
+	{
+		LocomotionMode = NewState;
+	}
+}
+
 void URlsCharacterMovementComponent::MoveSmooth(const FVector& InVelocity, const float DeltaSeconds,
-	FStepDownResult* OutStepDownResult)
+                                                FStepDownResult* OutStepDownResult)
 {
 	if (IsMovingOnGround())
 	{
 		UpdateGroundedMovement();
 	}
-	Super::MoveSmooth(InVelocity, DeltaSeconds, OutStepDownResult);
 	
+	if (IsFlying())
+	{
+		UpdateClimbMovement();
+	}
+	
+	Super::MoveSmooth(InVelocity, DeltaSeconds, OutStepDownResult);
 }
 
 void URlsCharacterMovementComponent::PhysWalking(float deltaTime, int32 Iterations)
@@ -33,8 +46,13 @@ void URlsCharacterMovementComponent::PhysWalking(float deltaTime, int32 Iteratio
 void URlsCharacterMovementComponent::PhysNavWalking(const float DeltaTime, const int32 IterationsCount)
 {
 	UpdateGroundedMovement();
-
 	Super::PhysNavWalking(DeltaTime, IterationsCount);
+}
+
+void URlsCharacterMovementComponent::PhysFlying(float deltaTime, int32 Iterations)
+{
+	UpdateClimbMovement();
+	Super::PhysFlying(deltaTime, Iterations);
 }
 
 URlsCharacterMovementComponent::URlsCharacterMovementComponent()
@@ -62,4 +80,13 @@ void URlsCharacterMovementComponent::UpdateGroundedMovement()
 	{
 		MaxWalkSpeed = Character->Settings->Grounded.MaxRunSpeed;
 	}
+	
+}
+
+void URlsCharacterMovementComponent::UpdateClimbMovement()
+{
+	if (!IsValid(Character) || !IsValid(Character->Settings)
+		|| LocomotionMode != RlsLocomotionModeTags::Climb) return;
+
+	MaxFlySpeed = Character->Settings->Climb.MaxClimbSpeed;
 }

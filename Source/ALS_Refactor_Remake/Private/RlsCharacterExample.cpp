@@ -84,6 +84,9 @@ void ARlsCharacterExample::Input_OnMove(const FInputActionValue& ActionValue)
 {
 	const FVector2D Value{URlsVector::ClampMagnitude012D(ActionValue.Get<FVector2D>())};
 
+	InputMoveLR = Value.X;
+	InputMoveUD = Value.Y;
+
 	const FRotator& ViewRotation = Super::GetViewRotation().GetNormalized();
 	const FVector& ViewForwardDir = URlsVector::AngleToDirectionXY(ViewRotation.Yaw);
 	const FVector& ViewRightDir = URlsVector::PerpendicularCounterClockwiseXY(ViewForwardDir);

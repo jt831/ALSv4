@@ -75,4 +75,10 @@ struct ALS_REFACTOR_REMAKE_API FRlsLocomotionAnimBaseValues
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS", Meta = (ClampMin = 0, ForceUnits = "cm"))
 	float CapsuleHalfHeight{0.0f};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS", meta=(ClampMin=-1., ClampMax=1.))
+	float InputMoveLR {0.};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RLS", meta=(ClampMin=-1., ClampMax=1.))
+	float InputMoveUD {0.};
 };

@@ -24,6 +24,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character")
 	TObjectPtr<URlsAnimInstance> AnimInstance;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="RLS|Input Value", meta=(ClampMin=-1., ClampMax=1.))
+	float InputMoveLR {0.};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="RLS|Input Value", meta=(ClampMin=-1., ClampMax=1.))
+	float InputMoveUD {0.};
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)

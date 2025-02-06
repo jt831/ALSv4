@@ -77,6 +77,9 @@ void URlsAnimInstance::UpdateInfoFromCharacter()
 	auto* Capsule = Character->GetCapsuleComponent();
 	LocomotionBaseValues.CapsuleRadius = Capsule->GetScaledCapsuleRadius();
 	LocomotionBaseValues.CapsuleHalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+
+	LocomotionBaseValues.InputMoveLR = Character->InputMoveLR;
+	LocomotionBaseValues.InputMoveUD = Character->InputMoveUD;
 }
 
 void URlsAnimInstance::UpdateGroundedMovement(float DeltaTime)

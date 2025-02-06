@@ -109,6 +109,9 @@ void ARlsCharacter::UpdateLocomotionValues(float DeltaTime)
 		PreviousControlRotation = LocomotionValues.ControlRotation;
 	}
 	LocomotionValues.ControlRotationRate = LocomotionValues.ControlRotation - PreviousControlRotation;
+
+	InputMoveLR = 0.;
+	InputMoveUD = 0.;
 }
 
 void ARlsCharacter::UpdateCharacterRotation(float DeltaTime)
@@ -179,6 +182,7 @@ void ARlsCharacter::UpdateCharacterStates()
 {
 	UpdateGait();
 	UpdateRotationMode();
+	MovementComponent->SetLocomotionMode(LocomotionMode);
 }
 
 void ARlsCharacter::SetLocomotionMode(const FGameplayTag& NewState)

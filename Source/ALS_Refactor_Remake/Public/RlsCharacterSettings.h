@@ -56,6 +56,13 @@ struct FRlsCharacterSettingsGrounded
 	FRlsCharacterSettingsGroundedInterpSpeed InterpSpeed;
 };
 
+USTRUCT(BlueprintType)
+struct FRlsCharacterSettingsClimb
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rls", meta = (ClampMin = 0, ForceUnits="cm/s"))
+	float MaxClimbSpeed{100.f};
+};
 UCLASS()
 class ALS_REFACTOR_REMAKE_API URlsCharacterSettings : public UDataAsset
 {
@@ -65,5 +72,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rls")
 	FRlsCharacterSettingsGrounded Grounded;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rls")
+	FRlsCharacterSettingsClimb Climb;
 };
