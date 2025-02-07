@@ -115,6 +115,8 @@ void ARlsCharacter::UpdateLocomotionValues(float DeltaTime)
 
 	PreviousStartClimbDelayTime = StartClimbDelayTime;
 	StartClimbDelayTime = StartClimbDelayTime <= 0. ? 0. : StartClimbDelayTime - DeltaTime;
+
+	bForwardKeyPressed = false;
 }
 
 void ARlsCharacter::UpdateCharacterRotation(float DeltaTime)
