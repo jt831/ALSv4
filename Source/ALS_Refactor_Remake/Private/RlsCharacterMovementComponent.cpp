@@ -5,6 +5,11 @@
 
 #include "RlsCharacterSettings.h"
 
+URlsCharacterMovementComponent::URlsCharacterMovementComponent()
+{
+	Character = Cast<ARlsCharacter>(GetOwner());
+}
+
 void URlsCharacterMovementComponent::SetGait_Part1(const FGameplayTag& NewState)
 {
 	if (NewState != Gait_Part1)
@@ -21,43 +26,16 @@ void URlsCharacterMovementComponent::SetLocomotionMode(const FGameplayTag& NewSt
 	}
 }
 
-void URlsCharacterMovementComponent::MoveSmooth(const FVector& InVelocity, const float DeltaSeconds,
-                                                FStepDownResult* OutStepDownResult)
-{
-	if (IsMovingOnGround())
-	{
-		UpdateGroundedMovement();
-	}
-	
-	if (IsFlying())
-	{
-		UpdateClimbMovement();
-	}
-	
-	Super::MoveSmooth(InVelocity, DeltaSeconds, OutStepDownResult);
-}
-
 void URlsCharacterMovementComponent::PhysWalking(float deltaTime, int32 Iterations)
 {
 	UpdateGroundedMovement();
 	Super::PhysWalking(deltaTime, Iterations);
 }
 
-void URlsCharacterMovementComponent::PhysNavWalking(const float DeltaTime, const int32 IterationsCount)
-{
-	UpdateGroundedMovement();
-	Super::PhysNavWalking(DeltaTime, IterationsCount);
-}
-
 void URlsCharacterMovementComponent::PhysFlying(float deltaTime, int32 Iterations)
 {
 	UpdateClimbMovement();
 	Super::PhysFlying(deltaTime, Iterations);
-}
-
-URlsCharacterMovementComponent::URlsCharacterMovementComponent()
-{
-	Character = Cast<ARlsCharacter>(GetOwner());
 }
 
 void URlsCharacterMovementComponent::UpdateGroundedMovement()
@@ -80,7 +58,6 @@ void URlsCharacterMovementComponent::UpdateGroundedMovement()
 	{
 		MaxWalkSpeed = Character->Settings->Grounded.MaxRunSpeed;
 	}
-	
 }
 
 void URlsCharacterMovementComponent::UpdateClimbMovement()

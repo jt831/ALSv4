@@ -112,6 +112,9 @@ void ARlsCharacter::UpdateLocomotionValues(float DeltaTime)
 
 	InputMoveLR = 0.;
 	InputMoveUD = 0.;
+
+	PreviousStartClimbDelayTime = StartClimbDelayTime;
+	StartClimbDelayTime = StartClimbDelayTime <= 0. ? 0. : StartClimbDelayTime - DeltaTime;
 }
 
 void ARlsCharacter::UpdateCharacterRotation(float DeltaTime)
@@ -127,8 +130,11 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 	if (LocomotionAction == RlsLocomotionActionTags::None &&
 		(LocomotionValues.bHasVelocity || HasAnyRootMotion()))
 	{
+		/*const FRotator VelocityRotator = FMath::IsNearlyZero(LocomotionValues.Velocity.Length()) ?
+			UKismetMathLibrary::Conv_VectorToRotator(MovementComponent->GetCurrentAcceleration()):
+			UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);*/
 		const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);
-		//const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(MovementComponent->GetCurrentAcceleration());
+		
 		const FRotator ViewRotator = GetViewRotation();
 		
 		if (bInitRotation)

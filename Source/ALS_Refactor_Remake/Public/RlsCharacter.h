@@ -30,6 +30,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="RLS|Input Value", meta=(ClampMin=-1., ClampMax=1.))
 	float InputMoveUD {0.};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RLS|Climb")
+	float StartClimbDelayTime {0.};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RLS|Climb")
+	float PreviousStartClimbDelayTime {0.};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RLS|Climb")
+	float StartClimbDelayTimeAThreshold {0.3};
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
