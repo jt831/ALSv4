@@ -7,7 +7,7 @@
 #include "RlsCharacterSettings.generated.h"
 
 USTRUCT(BlueprintType)
-struct FRlsCharacterSettingsGroundedInterpSpeed
+struct ALS_REFACTOR_REMAKE_API FRlsCharacterSettingsGroundedInterpSpeed
 {
 	GENERATED_BODY()
 	
@@ -25,7 +25,7 @@ struct FRlsCharacterSettingsGroundedInterpSpeed
 };
 
 USTRUCT(BlueprintType)
-struct FRlsCharacterSettingsGroundedThreshold
+struct ALS_REFACTOR_REMAKE_API FRlsCharacterSettingsGroundedThreshold
 {
 	GENERATED_BODY()
 
@@ -36,7 +36,7 @@ struct FRlsCharacterSettingsGroundedThreshold
 };
 
 USTRUCT(BlueprintType)
-struct FRlsCharacterSettingsGrounded
+struct ALS_REFACTOR_REMAKE_API FRlsCharacterSettingsGrounded
 {
 	GENERATED_BODY()
 	
@@ -57,13 +57,24 @@ struct FRlsCharacterSettingsGrounded
 };
 
 USTRUCT(BlueprintType)
-struct FRlsCharacterSettingsClimb
+struct ALS_REFACTOR_REMAKE_API FRlsCharacterSettingsClimb
 {
 	GENERATED_BODY()
+
+	// 最小可攀爬物体的宽度
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rls", meta = (ClampMin = 0, ForceUnits="cm"))
+	float MinClimbedWidth {30.f};
+
+	// 最小可攀爬物体的高度
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rls", meta = (ClampMin = 0, ForceUnits="cm"))
+	float MinClimbedHeight {160.f};
+
+	// 最大攀爬速度
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rls", meta = (ClampMin = 0, ForceUnits="cm/s"))
 	float MaxClimbSpeed{100.f};
 };
-UCLASS()
+
+UCLASS(BlueprintType)
 class ALS_REFACTOR_REMAKE_API URlsCharacterSettings : public UDataAsset
 {
 	GENERATED_BODY()

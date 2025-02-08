@@ -73,7 +73,7 @@ protected:
 	FGameplayTag DesiredRotationMode{RlsRotationModeTags::VelocityDirection};
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
-	FGameplayTag PreviousLocomotionMode{RlsLocomotionModeTags::Grounded};
+	FGameplayTag PreviousLocomotionMode{FGameplayTag::EmptyTag};
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionMode"))
 	FGameplayTag LocomotionMode{RlsLocomotionModeTags::Grounded};
@@ -87,7 +87,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.Gait"))
 	FGameplayTag Gait{RlsGaitTags::Running};
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionAction"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings|Rls Character", Transient, meta=(Categories="Rls.LocomotionAction"))
 	FGameplayTag LocomotionAction{RlsLocomotionActionTags::None};
 	
 	// 速度加速度这些运动信息

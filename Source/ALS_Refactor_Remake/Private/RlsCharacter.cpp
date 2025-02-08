@@ -40,17 +40,24 @@ void ARlsCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
 	PreviousLocomotionMode = LocomotionMode;
+	if (PreviousLocomotionMode != RlsLocomotionModeTags::Grounded)
+	{
+		bInitRotation = true;
+	}
 	switch (GetCharacterMovement()->MovementMode)
 	{
 		case MOVE_Walking:
+			SetLocomotionMode(RlsLocomotionModeTags::Grounded);
+			break;
 		case MOVE_NavWalking:
 			SetLocomotionMode(RlsLocomotionModeTags::Grounded);
 			break;
-
 		case MOVE_Falling:
 			SetLocomotionMode(RlsLocomotionModeTags::InAir);
 			break;
-
+		case MOVE_Flying:
+			SetLocomotionMode(RlsLocomotionModeTags::InAir);
+			break;
 		default:
 			SetLocomotionMode(FGameplayTag::EmptyTag);
 			break;
@@ -125,6 +132,11 @@ void ARlsCharacter::UpdateCharacterRotation(float DeltaTime)
 	{
 		UpdateGroundedRotation(DeltaTime);
 	}
+	else
+	{
+		ConstTargetRotation = TargetRotation = GetActorRotation();
+		SetActorRotation(TargetRotation);
+	}
 }
 
 void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
@@ -132,17 +144,16 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 	if (LocomotionAction == RlsLocomotionActionTags::None &&
 		(LocomotionValues.bHasVelocity || HasAnyRootMotion()))
 	{
-		/*const FRotator VelocityRotator = FMath::IsNearlyZero(LocomotionValues.Velocity.Length()) ?
-			UKismetMathLibrary::Conv_VectorToRotator(MovementComponent->GetCurrentAcceleration()):
-			UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);*/
-		const FRotator VelocityRotator = UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);
+		bool bHasRootMotion = HasAnyRootMotion();
+
+		const FRotator VelocityRotator = bHasRootMotion ? TargetRotation:
+			UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);
 		
 		const FRotator ViewRotator = GetViewRotation();
 		
 		if (bInitRotation)
 		{
-			SetActorRotation(ViewRotator);
-			TargetRotation = ViewRotator;
+			ConstTargetRotation = TargetRotation = GetActorRotation();
 			bInitRotation = false;
 			return;
 		}
@@ -169,7 +180,6 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 				}
 			}
 		}
-
 		ConstTargetRotation.Roll = ConstTargetRotation.Pitch = 0.f;
 		SetCharacterRotation(ConstTargetRotation, DeltaTime, ConstInterpSpeed, InterpSpeed);
 	}
