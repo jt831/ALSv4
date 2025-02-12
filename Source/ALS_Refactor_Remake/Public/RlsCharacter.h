@@ -32,7 +32,7 @@ public:
 	float InputMoveUD {0.};
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="RLS|Input Value")
-	bool bForwardKeyPressed {false};
+	bool bForwardAcceleration {false};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RLS|Climb")
 	float StartClimbDelayTime {0.};
@@ -50,6 +50,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
 	bool bInitRotation{true};
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
+	FVector WorldDirection {GetVelocity()};
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings|Rls Character", Transient)
 	FRotator ConstTargetRotation{ForceInit};
 	

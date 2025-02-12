@@ -15,7 +15,6 @@ ARlsCharacter::ARlsCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	MovementComponent = Cast<URlsCharacterMovementComponent>(GetCharacterMovement());
-
 }
 
 // Called every frame
@@ -123,7 +122,10 @@ void ARlsCharacter::UpdateLocomotionValues(float DeltaTime)
 	PreviousStartClimbDelayTime = StartClimbDelayTime;
 	StartClimbDelayTime = StartClimbDelayTime <= 0. ? 0. : StartClimbDelayTime - DeltaTime;
 
-	bForwardKeyPressed = false;
+	FRotator ActorRotation = GetActorRotation();
+	FVector ActorRotationToVector = UKismetMathLibrary::Conv_RotatorToVector(ActorRotation);
+	bForwardAcceleration = UKismetMathLibrary::EqualEqual_VectorVector(LocomotionValues.Acceleration, ActorRotationToVector);
+	
 }
 
 void ARlsCharacter::UpdateCharacterRotation(float DeltaTime)
@@ -145,9 +147,8 @@ void ARlsCharacter::UpdateGroundedRotation(float DeltaTime)
 		(LocomotionValues.bHasVelocity || HasAnyRootMotion()))
 	{
 		bool bHasRootMotion = HasAnyRootMotion();
-
 		const FRotator VelocityRotator = bHasRootMotion ? TargetRotation:
-			UKismetMathLibrary::Conv_VectorToRotator(LocomotionValues.Velocity);
+			UKismetMathLibrary::Conv_VectorToRotator(WorldDirection.GetSafeNormal());
 		
 		const FRotator ViewRotator = GetViewRotation();
 		

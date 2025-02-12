@@ -5,7 +5,6 @@
 #include "RlsCameraComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Utility/RlsVector.h"
-#include "GameFramework/PlayerController.h"
 
 
 ARlsCharacterExample::ARlsCharacterExample()
@@ -86,8 +85,6 @@ void ARlsCharacterExample::Input_OnMove(const FInputActionValue& ActionValue)
 
 	InputMoveLR = Value.X;
 	InputMoveUD = Value.Y;
-
-	bForwardKeyPressed = FMath::IsNearlyEqual(Value.Y, 1.f);
 	
 	const FRotator& ViewRotation = Super::GetViewRotation().GetNormalized();
 	const FVector& ViewForwardDir = URlsVector::AngleToDirectionXY(ViewRotation.Yaw);
@@ -98,7 +95,8 @@ void ARlsCharacterExample::Input_OnMove(const FInputActionValue& ActionValue)
 
 	if (LocomotionMode == RlsLocomotionModeTags::Grounded)
 	{
-		AddMovementInput(ViewForwardDir*Value.Y+ViewRightDir*Value.X);
+		WorldDirection = ViewForwardDir*Value.Y+ViewRightDir*Value.X;
+		AddMovementInput(WorldDirection);
 	}
 	else if (LocomotionMode == RlsLocomotionModeTags::Climb)
 	{
